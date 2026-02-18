@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Subject to Love - Page</title>
-  <link rel="icon" type="image/webp" href="/favicon.webp">
+  <title>Subject to Love</title>
+
+  <!-- FIXED favicon -->
+  <link rel="icon" type="image/webp" href="favicon.webp">
 
   <style>
     body {
@@ -90,7 +92,6 @@
       border: 2px solid #ff2f83;
       cursor: pointer;
       transition: 0.25s ease;
-      animation: fadeIn 0.7s ease;
     }
 
     .nav-btn:hover {
@@ -106,21 +107,19 @@
       min-height: 100vh;
     }
 
-    /* ===== CHARACTER CLUSTER ===== */
-
     .character-sprite {
       position: relative;
       height: 520px;
       margin-top: 40px;
     }
-  .character {
-    position: absolute;
-    bottom: 0;
-    width: 170px;
-    transform-origin: bottom center;
-    animation: spriteFloat 3.5s ease-in-out infinite;
-}
 
+    .character {
+      position: absolute;
+      bottom: 0;
+      width: 170px;
+      transform-origin: bottom center;
+      animation: spriteFloat 3.5s ease-in-out infinite;
+    }
 
     @keyframes spriteFloat {
       0% { transform: translateY(0); }
@@ -128,7 +127,6 @@
       100% { transform: translateY(0); }
     }
 
-    /* Cramped DDLC-style cluster (can you tell this is heavilty inspired by DDLC*/
     .c1 { left: 38%; transform: scale(0.9);  z-index: 1; }
     .c2 { left: 41%; transform: scale(0.95); z-index: 2; }
     .c3 { left: 44%; transform: scale(1);    z-index: 3; }
@@ -136,44 +134,74 @@
     .c5 { left: 50%; transform: scale(1);    z-index: 3; }
     .c6 { left: 53%; transform: scale(0.95); z-index: 2; }
     .c7 { left: 56%; transform: scale(0.9);  z-index: 1; }
+
+    /* ===== MOBILE FIX ===== */
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-radius: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 10px 0;
+      }
+
+      .nav-btn {
+        width: auto;
+        margin: 6px;
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      .content {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .character-sprite {
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .character {
+        position: relative;
+        width: 120px;
+        margin: 10px;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div class="sidebar slide-in-left">
-    <img class="logo" src="/mnt/data/0472727b-99da-4f33-b00f-fa39f5e95cdb.png" alt="logo" />
 
-    <div class="nav-btn">Home</div>
+  <div class="sidebar slide-in-left">
+    <!-- PUT YOUR LOGO IN assets/images/logo.png -->
+    <img class="logo" src="assets/images/logo.png" alt="logo" />
+
+    <a href="index.html"><div class="nav-btn">Home</div></a>
     <a href="about.html"><div class="nav-btn">About the Game</div></a>
     <a href="play.html"><div class="nav-btn">PLAY!!</div></a>
     <a href="notebook.html"><div class="nav-btn">Notebook</div></a>
     <a href="gallery.html"><div class="nav-btn">Gallery</div></a>
-    <a href ="settings.html"><div class = "nav-btn">Settings</div></a>
+    <a href="settings.html"><div class="nav-btn">Settings</div></a>
   </div>
 
   <div class="content fade-in">
     <div class="character-sprite">
-      <img src="assets/characters/math.png.png" class="character c1" alt="Math">
+      <img src="assets/characters/math.png" class="character c1" alt="Math">
       <img src="assets/characters/physics.png" class="character c2" alt="Physics">
-      <img src="assets/characters/chem.png.png" class="character c3" alt="Chemistry">
+      <img src="assets/characters/chem.png" class="character c3" alt="Chemistry">
       <img src="assets/characters/bio.png" class="character c4" alt="Biology">
-      <img src="assets/characters/cs.png.png" class="character c5" alt="CS">
+      <img src="assets/characters/cs.png" class="character c5" alt="CS">
       <img src="assets/characters/eng.png" class="character c6" alt="English">
       <img src="assets/characters/filipino.png" class="character c7" alt="Filipino">
     </div>
   </div>
 
-  <script>
-    document.querySelectorAll(".nav-btn").forEach(btn => {
-      btn.addEventListener("mousemove", e => {
-        const sparkle = document.createElement("span");
-        sparkle.classList.add("sparkle");
-        sparkle.style.left = e.offsetX + "px";
-        sparkle.style.top = e.offsetY + "px";
-        btn.appendChild(sparkle);
-        setTimeout(() => sparkle.remove(), 650);
-      });
-    });
-  </script>
 </body>
 </html>
