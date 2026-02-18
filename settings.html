@@ -1,300 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌸 VN Settings 🌸</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Settings</title>
+<link rel="icon" type="image/webp" href="/favicon.webp">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
-  /* === BODY & BACKGROUND === */
-  body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    background: linear-gradient(135deg, #ffeaf3, #ffdce9, #fff1e6);
-    animation: bgColorAnim 30s ease-in-out infinite alternate;
-  }
+:root{
+  --pink-1:#ffdbe9;
+  --pink-2:#ffc0dd;
+  --accent:#ff4c94;
+  --panel:#ff6aa8;
+  --panel-deep:#ff3e86;
+}
 
-  @keyframes bgColorAnim {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-  }
+/* ===== BACKGROUND (matches About page) ===== */
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.75) 0 5px, transparent 6px),
+    linear-gradient(180deg,var(--pink-1),#ffeaf3);
+  background-size:28px 28px, auto;
+  animation: moveDots 16s linear infinite;
+  overflow-x:hidden;
+}
 
-  /* === FLOATING ELEMENTS === */
-  .sparkle, .bubble, .cloud {
-    position: absolute;
-    border-radius: 50%;
-  }
+@keyframes moveDots{
+  0% { background-position:0 0, 0 0; }
+  100% { background-position:140px 140px, 0 0; }
+}
 
-  .sparkle {
-    width: 6px; height: 6px; background: white; opacity: 0.8;
-    animation: sparkleAnim linear infinite;
-  }
+/* ===== SIDEBAR (like Subject page) ===== */
+.sidebar{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 210px;
+  height: 100vh;
+  background: #ffb8d1cc;
+  backdrop-filter: blur(4px);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 4px 0 12px rgba(0,0,0,0.1);
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+}
 
-  @keyframes sparkleAnim {
-    0% {transform: translateY(0) scale(1);}
-    50% {transform: translateY(-25px) scale(1.2);}
-    100% {transform: translateY(0) scale(1);}
-  }
+.nav-btn{
+  width:150px;
+  padding:12px;
+  margin:10px 0;
+  border-radius:20px;
+  background:#ffd4e6;
+  text-align:center;
+  font-weight:600;
+  color:var(--accent);
+  border:2px solid var(--accent);
+  cursor:pointer;
+  transition:0.25s ease;
+  text-decoration:none;
+}
 
-  .bubble {
-    width: 12px; height: 12px; background: rgba(255,255,255,0.3);
-    animation: bubbleAnim linear infinite;
-  }
+.nav-btn:hover{
+  transform:scale(1.07);
+  background:var(--accent);
+  color:white;
+}
 
-  @keyframes bubbleAnim {
-    0% {transform: translateY(0) scale(1);}
-    100% {transform: translateY(-150px) scale(1.3);}
-  }
+/* ===== MAIN CONTENT ===== */
+.content{
+  margin-left:230px;
+  padding:40px;
+}
 
-  .cloud {
-    width: 80px; height: 50px;
-    background: rgba(255,255,255,0.6);
-    border-radius: 50% 50% 50% 50%;
-    animation: cloudAnim linear infinite;
-  }
+.settings-panel{
+  max-width:800px;
+  margin:auto;
+  padding:40px;
+  border-radius:24px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(8px);
+  border:3px solid var(--accent);
+  box-shadow:0 12px 25px rgba(255,120,180,0.3);
+}
 
-  @keyframes cloudAnim {
-    0% {transform: translateX(-200px);}
-    100% {transform: translateX(120vw);}
-  }
+h1{
+  text-align:center;
+  color:var(--accent);
+  margin-bottom:30px;
+}
 
-  /* === SETTINGS BOX === */
-  .settings-container {
-    position: relative;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 40px 50px;
-    border-radius: 25px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    width: 380px;
-    text-align: center;
-    animation: boxBounce 3s ease-in-out infinite;
-  }
+.setting{
+  margin-bottom:28px;
+}
 
-  @keyframes boxBounce {
-    0%,100% {transform: translateY(0);}
-    50% {transform: translateY(-10px);}
-  }
+label{
+  font-weight:600;
+  color:var(--accent);
+  display:block;
+  margin-bottom:8px;
+}
 
-  h2 {
-    font-size: 30px;
-    margin-bottom: 25px;
-    color: #ff7ea1;
-    text-shadow: 1px 1px 4px #fff;
-  }
+/* ===== SLIDERS ===== */
+input[type="range"]{
+  width:100%;
+  accent-color: var(--accent);
+}
 
-  .setting {
-    margin-bottom: 25px;
-  }
+/* ===== TOGGLE ===== */
+.switch{
+  position: relative;
+  display:inline-block;
+  width:50px;
+  height:28px;
+}
 
-  label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #ff5c8d;
-    transition: transform 0.2s;
-  }
+.switch input{ opacity:0; width:0; height:0; }
 
-  label:hover {transform: scale(1.05);}
+.slider{
+  position:absolute;
+  cursor:pointer;
+  inset:0;
+  background:#ffc0dd;
+  border-radius:28px;
+  transition:0.3s;
+}
 
-  /* === RANGE SLIDERS === */
-  input[type="range"] {
-    width: 100%;
-    -webkit-appearance: none;
-    height: 14px;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #ffb6c1, #ff7ea1, #ffb6c1);
-    cursor: pointer;
-    transition: transform 0.2s;
-    background-size: 200% 100%;
-    animation: gradientShift 4s linear infinite;
-  }
+.slider:before{
+  content:"";
+  position:absolute;
+  height:22px;
+  width:22px;
+  left:3px;
+  bottom:3px;
+  background:white;
+  border-radius:50%;
+  transition:0.3s;
+}
 
-  input[type="range"]:hover {transform: scale(1.05);}
+input:checked + .slider{
+  background:var(--accent);
+}
 
-  @keyframes gradientShift {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-  }
+input:checked + .slider:before{
+  transform:translateX(22px);
+}
 
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 24px;
-    height: 24px;
-    background: #fff;
-    border: 3px solid #ff7ea1;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
-  }
+/* ===== BUTTONS ===== */
+.btn{
+  padding:12px 24px;
+  border-radius:18px;
+  border:2px solid var(--accent);
+  background:var(--pink-2);
+  color:var(--accent);
+  font-weight:700;
+  cursor:pointer;
+  transition:0.25s;
+  margin-right:10px;
+}
 
-  input[type="range"]::-webkit-slider-thumb:hover {transform: scale(1.3);}
-
-  /* === TOGGLE SWITCHES === */
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 50px; height: 28px;
-  }
-
-  .switch input {opacity: 0; width: 0; height: 0;}
-
-  .slider-switch {
-    position: absolute; cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ffb6c1;
-    transition: .4s;
-    border-radius: 28px;
-  }
-
-  .slider-switch:before {
-    position: absolute;
-    content: "";
-    height: 22px; width: 22px;
-    left: 3px; bottom: 3px;
-    background-color: white;
-    border-radius: 50%;
-    transition: .4s;
-  }
-
-  input:checked + .slider-switch {background-color: #ff7ea1;}
-  input:checked + .slider-switch:before {transform: translateX(22px);}
-
-  /* === BUTTON === */
-  button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    background-color: #ff7ea1;
-    border-radius: 18px;
-    font-weight: 600;
-    font-size: 16px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  }
-
-  button:hover {
-    transform: translateY(-4px) scale(1.02);
-    background-color: #ff5c8d;
-    box-shadow: 0 14px 28px rgba(0,0,0,0.3);
-  }
+.btn:hover{
+  background:var(--accent);
+  color:white;
+  transform:translateY(-3px);
+}
 </style>
 </head>
+
 <body>
 
-<div class="settings-container">
-  <h2>🌸 VN Settings 🌸</h2>
+<div class="sidebar">
+  <a href="index.html" class="nav-btn">Home</a>
+  <a href="about.html" class="nav-btn">About</a>
+  <a href="play.html" class="nav-btn">PLAY!!</a>
+  <a href="notebook.html" class="nav-btn">Notebook</a>
+  <a href="gallery.html" class="nav-btn">Gallery</a>
+  <a href="settings.html" class="nav-btn">Settings</a>
+</div>
 
-  <div class="setting">
-    <label for="bgmVolume">BGM Volume</label>
-    <input type="range" id="bgmVolume" min="0" max="100" value="70">
+<div class="content">
+  <div class="settings-panel">
+    <h1>Game Settings</h1>
+
+    <div class="setting">
+      <label>BGM Volume</label>
+      <input type="range" id="bgmVolume" min="0" max="100">
+    </div>
+
+    <div class="setting">
+      <label>SFX Volume</label>
+      <input type="range" id="sfxVolume" min="0" max="100">
+    </div>
+
+    <div class="setting">
+      <label>Voice Volume</label>
+      <input type="range" id="voiceVolume" min="0" max="100">
+    </div>
+
+    <div class="setting">
+      <label>Text Speed</label>
+      <input type="range" id="textSpeed" min="1" max="100">
+    </div>
+
+    <div class="setting">
+      <label>Auto Mode Speed</label>
+      <input type="range" id="autoSpeed" min="1" max="100">
+    </div>
+
+    <div class="setting">
+      <label>Font Size</label>
+      <input type="range" id="fontSize" min="14" max="32">
+    </div>
+
+    <div class="setting">
+      <label>Skip Unread Text</label>
+      <label class="switch">
+        <input type="checkbox" id="skipUnread">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting">
+      <label>Fullscreen Mode</label>
+      <label class="switch">
+        <input type="checkbox" id="fullscreen">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <button class="btn" onclick="saveSettings()">Save</button>
+    <button class="btn" onclick="resetSettings()">Reset</button>
+
   </div>
-
-  <div class="setting">
-    <label for="seVolume">SE Volume</label>
-    <input type="range" id="seVolume" min="0" max="100" value="70">
-  </div>
-
-  <div class="setting">
-    <label for="voiceVolume">Voice Volume</label>
-    <input type="range" id="voiceVolume" min="0" max="100" value="70">
-  </div>
-
-  <div class="setting">
-    <label for="textSpeed">Text Speed</label>
-    <input type="range" id="textSpeed" min="1" max="10" value="5">
-  </div>
-
-  <div class="setting">
-    <label for="fontSize">Font Size</label>
-    <input type="range" id="fontSize" min="14" max="28" value="18">
-  </div>
-
-  <div class="setting">
-    <label>Theme</label>
-    <label class="switch">
-      <input type="checkbox" id="themeToggle">
-      <span class="slider-switch"></span>
-    </label>
-  </div>
-
-  <button id="saveBtn">💖 Save Settings 💖</button>
 </div>
 
 <script>
-  // === Floating sparkles, bubbles, clouds ===
-  for(let i=0;i<25;i++){
-    let sparkle = document.createElement('div');
-    sparkle.classList.add('sparkle');
-    sparkle.style.top = Math.random()*window.innerHeight+'px';
-    sparkle.style.left = Math.random()*window.innerWidth+'px';
-    sparkle.style.animationDuration = (Math.random()*5+3)+'s';
-    sparkle.style.opacity = Math.random();
-    document.body.appendChild(sparkle);
-  }
+const defaultSettings = {
+  bgmVolume:70,
+  sfxVolume:70,
+  voiceVolume:70,
+  textSpeed:50,
+  autoSpeed:50,
+  fontSize:18,
+  skipUnread:false,
+  fullscreen:false
+};
 
-  for(let i=0;i<15;i++){
-    let bubble = document.createElement('div');
-    bubble.classList.add('bubble');
-    bubble.style.left = Math.random()*window.innerWidth+'px';
-    bubble.style.bottom = Math.random()*-300+'px';
-    bubble.style.width = 8+Math.random()*8+'px';
-    bubble.style.height = bubble.style.width;
-    bubble.style.animationDuration = (Math.random()*5+5)+'s';
-    document.body.appendChild(bubble);
-  }
+function loadSettings(){
+  const saved = JSON.parse(localStorage.getItem("vnSettings")) || defaultSettings;
 
-  for(let i=0;i<6;i++){
-    let cloud = document.createElement('div');
-    cloud.classList.add('cloud');
-    cloud.style.top = Math.random()*100+'px';
-    cloud.style.animationDuration = (Math.random()*40+30)+'s';
-    cloud.style.width = 60+Math.random()*60+'px';
-    cloud.style.height = 40+Math.random()*20+'px';
-    document.body.appendChild(cloud);
-  }
+  for(let key in saved){
+    const el = document.getElementById(key);
+    if(!el) continue;
 
-  // === Save/load settings ===
-  const settingsElements = {
-    bgmVolume: document.getElementById('bgmVolume'),
-    seVolume: document.getElementById('seVolume'),
-    voiceVolume: document.getElementById('voiceVolume'),
-    textSpeed: document.getElementById('textSpeed'),
-    fontSize: document.getElementById('fontSize'),
-    themeToggle: document.getElementById('themeToggle')
-  };
-
-  window.onload = () => {
-    if(localStorage.getItem('vnSettings')){
-      const saved = JSON.parse(localStorage.getItem('vnSettings'));
-      for(const key in settingsElements){
-        if(settingsElements[key].type === "checkbox"){
-          settingsElements[key].checked = saved[key];
-        } else {
-          settingsElements[key].value = saved[key];
-        }
-      }
+    if(el.type === "checkbox"){
+      el.checked = saved[key];
+    } else {
+      el.value = saved[key];
     }
   }
 
-  document.getElementById('saveBtn').addEventListener('click',()=>{
-    const saveData = {};
-    for(const key in settingsElements){
-      saveData[key] = settingsElements[key].type==="checkbox" ? settingsElements[key].checked : settingsElements[key].value;
-    }
-    localStorage.setItem('vnSettings', JSON.stringify(saveData));
-    alert('💖 Settings saved! 💖');
+  applySettings(saved);
+}
+
+function saveSettings(){
+  const settings = {};
+  Object.keys(defaultSettings).forEach(key=>{
+    const el = document.getElementById(key);
+    settings[key] = el.type === "checkbox" ? el.checked : parseInt(el.value);
   });
+
+  localStorage.setItem("vnSettings", JSON.stringify(settings));
+  applySettings(settings);
+  alert("Settings saved!");
+}
+
+function resetSettings(){
+  localStorage.setItem("vnSettings", JSON.stringify(defaultSettings));
+  loadSettings();
+}
+
+function applySettings(settings){
+
+  // Apply font size globally
+  document.documentElement.style.setProperty("--vnFontSize", settings.fontSize + "px");
+
+  // Fullscreen
+  if(settings.fullscreen){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  }
+
+}
+
+window.onload = loadSettings;
 </script>
+
 </body>
 </html>
