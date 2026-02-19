@@ -12,20 +12,32 @@
   --pink-1:#ffdbe9;
   --pink-2:#ffc0dd;
   --accent:#ff4c94;
-  --panel:#ff6aa8;
-  --panel-deep:#ff3e86;
+
+  --dark-bg:#1f1f2f;
+  --dark-panel:#2b2b45;
+  --dark-accent:#c484ff;
+
+  --vnFontSize:18px;
 }
 
-/* ===== BACKGROUND (matches About page) ===== */
+/* ===== BACKGROUND ===== */
 body{
   margin:0;
   font-family:'Poppins',sans-serif;
+  font-size:var(--vnFontSize);
   background:
     radial-gradient(circle, rgba(255,255,255,0.75) 0 5px, transparent 6px),
     linear-gradient(180deg,var(--pink-1),#ffeaf3);
   background-size:28px 28px, auto;
   animation: moveDots 16s linear infinite;
-  overflow-x:hidden;
+  transition: all .3s ease;
+}
+
+body.dark-mode{
+  background:
+    radial-gradient(circle, rgba(200,180,255,0.3) 0 5px, transparent 6px),
+    linear-gradient(180deg,var(--dark-bg),var(--dark-panel));
+  color:#f0dfff;
 }
 
 @keyframes moveDots{
@@ -33,22 +45,25 @@ body{
   100% { background-position:140px 140px, 0 0; }
 }
 
-/* ===== SIDEBAR (like Subject page) ===== */
+/* ===== SIDEBAR ===== */
 .sidebar{
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 210px;
-  height: 100vh;
-  background: #ffb8d1cc;
-  backdrop-filter: blur(4px);
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 4px 0 12px rgba(0,0,0,0.1);
-  border-top-right-radius: 40px;
-  border-bottom-right-radius: 40px;
+  position:fixed;
+  left:0;
+  top:0;
+  width:210px;
+  height:100vh;
+  background:#ffb8d1cc;
+  backdrop-filter:blur(4px);
+  padding-top:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  border-top-right-radius:40px;
+  border-bottom-right-radius:40px;
+}
+
+body.dark-mode .sidebar{
+  background:rgba(60,50,90,0.7);
 }
 
 .nav-btn{
@@ -61,9 +76,14 @@ body{
   font-weight:600;
   color:var(--accent);
   border:2px solid var(--accent);
-  cursor:pointer;
-  transition:0.25s ease;
   text-decoration:none;
+  transition:.25s ease;
+}
+
+body.dark-mode .nav-btn{
+  background:#593c7f;
+  color:var(--dark-accent);
+  border:2px solid var(--dark-accent);
 }
 
 .nav-btn:hover{
@@ -72,7 +92,7 @@ body{
   color:white;
 }
 
-/* ===== MAIN CONTENT ===== */
+/* ===== MAIN ===== */
 .content{
   margin-left:230px;
   padding:40px;
@@ -83,95 +103,74 @@ body{
   margin:auto;
   padding:40px;
   border-radius:24px;
-  background: rgba(255,255,255,0.55);
-  backdrop-filter: blur(8px);
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(8px);
   border:3px solid var(--accent);
-  box-shadow:0 12px 25px rgba(255,120,180,0.3);
+}
+
+body.dark-mode .settings-panel{
+  background:rgba(40,30,70,0.7);
+  border:3px solid var(--dark-accent);
 }
 
 h1{
   text-align:center;
   color:var(--accent);
-  margin-bottom:30px;
 }
 
-.setting{
-  margin-bottom:28px;
-}
+body.dark-mode h1{ color:var(--dark-accent); }
+
+.setting{ margin-bottom:28px; }
 
 label{
   font-weight:600;
   color:var(--accent);
-  display:block;
-  margin-bottom:8px;
 }
 
-/* ===== SLIDERS ===== */
+body.dark-mode label{ color:var(--dark-accent); }
+
 input[type="range"]{
   width:100%;
-  accent-color: var(--accent);
+  accent-color:var(--accent);
 }
 
-/* ===== TOGGLE ===== */
-.switch{
-  position: relative;
-  display:inline-block;
-  width:50px;
-  height:28px;
+body.dark-mode input[type="range"]{
+  accent-color:var(--dark-accent);
 }
 
-.switch input{ opacity:0; width:0; height:0; }
-
-.slider{
-  position:absolute;
-  cursor:pointer;
-  inset:0;
-  background:#ffc0dd;
-  border-radius:28px;
-  transition:0.3s;
-}
-
-.slider:before{
-  content:"";
-  position:absolute;
-  height:22px;
-  width:22px;
-  left:3px;
-  bottom:3px;
-  background:white;
-  border-radius:50%;
-  transition:0.3s;
-}
-
-input:checked + .slider{
-  background:var(--accent);
-}
-
-input:checked + .slider:before{
-  transform:translateX(22px);
-}
-
-/* ===== BUTTONS ===== */
-.btn{
-  padding:12px 24px;
-  border-radius:18px;
-  border:2px solid var(--accent);
-  background:var(--pink-2);
+/* ===== DEMO BOX ===== */
+.demo-box{
+  margin-top:10px;
+  padding:12px 16px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.6);
+  border:1px solid var(--accent);
+  min-height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
   color:var(--accent);
-  font-weight:700;
-  cursor:pointer;
-  transition:0.25s;
-  margin-right:10px;
+
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+  transition:all .35s ease;
 }
 
-.btn:hover{
-  background:var(--accent);
-  color:white;
-  transform:translateY(-3px);
+.demo-box.active{
+  opacity:1;
+  transform:translateY(0);
 }
+
+body.dark-mode .demo-box{
+  background:rgba(60,50,90,0.7);
+  border:1px solid var(--dark-accent);
+  color:var(--dark-accent);
+}
+
 </style>
 </head>
-
 <body>
 
 <div class="sidebar">
@@ -184,120 +183,186 @@ input:checked + .slider:before{
 </div>
 
 <div class="content">
-  <div class="settings-panel">
-    <h1>Game Settings</h1>
+<div class="settings-panel">
+<h1>Game Settings</h1>
 
-    <div class="setting">
-      <label>BGM Volume</label>
-      <input type="range" id="bgmVolume" min="0" max="100">
-    </div>
+<div class="setting">
+<label>BGM Volume</label>
+<input type="range" id="bgmVolume" min="0" max="100">
+<div class="demo-box" id="bgmDemo"></div>
+</div>
 
-    <div class="setting">
-      <label>SFX Volume</label>
-      <input type="range" id="sfxVolume" min="0" max="100">
-    </div>
+<div class="setting">
+<label>SFX Volume</label>
+<input type="range" id="sfxVolume" min="0" max="100">
+<div class="demo-box" id="sfxDemo"></div>
+</div>
 
-    <div class="setting">
-      <label>Voice Volume</label>
-      <input type="range" id="voiceVolume" min="0" max="100">
-    </div>
+<div class="setting">
+<label>Voice Volume</label>
+<input type="range" id="voiceVolume" min="0" max="100">
+<div class="demo-box" id="voiceDemo"></div>
+</div>
 
-    <div class="setting">
-      <label>Text Speed</label>
-      <input type="range" id="textSpeed" min="1" max="100">
-    </div>
+<div class="setting">
+<label>Text Speed</label>
+<input type="range" id="textSpeed" min="1" max="100">
+<div class="demo-box" id="textSpeedDemo"></div>
+</div>
 
-    <div class="setting">
-      <label>Auto Mode Speed</label>
-      <input type="range" id="autoSpeed" min="1" max="100">
-    </div>
+<div class="setting">
+<label>Auto Mode Speed</label>
+<input type="range" id="autoSpeed" min="1" max="100">
+<div class="demo-box" id="autoSpeedDemo"></div>
+</div>
 
-    <div class="setting">
-      <label>Font Size</label>
-      <input type="range" id="fontSize" min="14" max="32">
-    </div>
+<div class="setting">
+<label>Font Size</label>
+<input type="range" id="fontSize" min="14" max="32">
+<div class="demo-box" id="fontDemo">Preview Text</div>
+</div>
 
-    <div class="setting">
-      <label>Skip Unread Text</label>
-      <label class="switch">
-        <input type="checkbox" id="skipUnread">
-        <span class="slider"></span>
-      </label>
-    </div>
+<div class="setting">
+<label>Skip Unread Text</label>
+<input type="checkbox" id="skipUnread">
+<div class="demo-box" id="skipDemo"></div>
+</div>
 
-    <div class="setting">
-      <label>Fullscreen Mode</label>
-      <label class="switch">
-        <input type="checkbox" id="fullscreen">
-        <span class="slider"></span>
-      </label>
-    </div>
+<div class="setting">
+<label>Fullscreen Mode</label>
+<input type="checkbox" id="fullscreen">
+<div class="demo-box" id="fsDemo"></div>
+</div>
 
-    <button class="btn" onclick="saveSettings()">Save</button>
-    <button class="btn" onclick="resetSettings()">Reset</button>
+<div class="setting">
+<label>Dark Mode</label>
+<input type="checkbox" id="darkMode">
+<div class="demo-box" id="darkDemo"></div>
+</div>
 
-  </div>
+</div>
 </div>
 
 <script>
-const defaultSettings = {
-  bgmVolume:70,
-  sfxVolume:70,
-  voiceVolume:70,
-  textSpeed:50,
-  autoSpeed:50,
-  fontSize:18,
-  skipUnread:false,
-  fullscreen:false
+const defaultSettings={
+  bgmVolume:70,sfxVolume:70,voiceVolume:70,
+  textSpeed:50,autoSpeed:50,fontSize:18,
+  skipUnread:false,fullscreen:false,darkMode:false
 };
 
-function loadSettings(){
-  const saved = JSON.parse(localStorage.getItem("vnSettings")) || defaultSettings;
+let activeDemo=null;
+let demoTimer=null;
 
-  for(let key in saved){
-    const el = document.getElementById(key);
-    if(!el) continue;
-
-    if(el.type === "checkbox"){
-      el.checked = saved[key];
-    } else {
-      el.value = saved[key];
-    }
-  }
-
-  applySettings(saved);
+function showDemo(id){
+  if(activeDemo) activeDemo.classList.remove("active");
+  const box=document.getElementById(id);
+  if(!box) return;
+  box.classList.add("active");
+  activeDemo=box;
 }
 
-function saveSettings(){
-  const settings = {};
-  Object.keys(defaultSettings).forEach(key=>{
-    const el = document.getElementById(key);
-    settings[key] = el.type === "checkbox" ? el.checked : parseInt(el.value);
-  });
-
-  localStorage.setItem("vnSettings", JSON.stringify(settings));
-  applySettings(settings);
-  alert("Settings saved!");
-}
-
-function resetSettings(){
-  localStorage.setItem("vnSettings", JSON.stringify(defaultSettings));
-  loadSettings();
+function clearDemo(){
+  if(demoTimer) clearInterval(demoTimer);
+  demoTimer=null;
 }
 
 function applySettings(settings){
+  document.documentElement.style.setProperty("--vnFontSize",settings.fontSize+"px");
+  document.body.classList.toggle("dark-mode",settings.darkMode);
 
-  // Apply font size globally
-  document.documentElement.style.setProperty("--vnFontSize", settings.fontSize + "px");
-
-  // Fullscreen
-  if(settings.fullscreen){
+  if(settings.fullscreen && !document.fullscreenElement){
     document.documentElement.requestFullscreen().catch(()=>{});
   }
-
+  if(!settings.fullscreen && document.fullscreenElement){
+    document.exitFullscreen().catch(()=>{});
+  }
 }
 
-window.onload = loadSettings;
+function updateSetting(id){
+  const settings=JSON.parse(localStorage.getItem("vnSettings"))||defaultSettings;
+  const el=document.getElementById(id);
+
+  settings[id]=el.type==="checkbox"?el.checked:parseInt(el.value);
+  localStorage.setItem("vnSettings",JSON.stringify(settings));
+  applySettings(settings);
+
+  clearDemo();
+
+  if(id==="bgmVolume"){
+    showDemo("bgmDemo");
+    bgmDemo.textContent="BGM Volume: "+settings.bgmVolume;
+  }
+
+  if(id==="sfxVolume"){
+    showDemo("sfxDemo");
+    sfxDemo.textContent="SFX Volume: "+settings.sfxVolume;
+  }
+
+  if(id==="voiceVolume"){
+    showDemo("voiceDemo");
+    voiceDemo.textContent="Voice Volume: "+settings.voiceVolume;
+  }
+
+  if(id==="fontSize"){
+    showDemo("fontDemo");
+    fontDemo.style.fontSize=settings.fontSize+"px";
+    fontDemo.textContent="Preview Text Size";
+  }
+
+  if(id==="skipUnread"){
+    showDemo("skipDemo");
+    skipDemo.textContent=settings.skipUnread?
+      "Skipping unread text ON":"Skipping unread text OFF";
+  }
+
+  if(id==="darkMode"){
+    showDemo("darkDemo");
+    darkDemo.textContent=settings.darkMode?
+      "Dark mode enabled":"Dark mode disabled";
+  }
+
+  if(id==="fullscreen"){
+    showDemo("fsDemo");
+    fsDemo.textContent=settings.fullscreen?
+      "Fullscreen enabled":"Fullscreen disabled";
+  }
+
+  if(id==="textSpeed"){
+    showDemo("textSpeedDemo");
+    const msgs=["Hello!","If you are seeing this, you are adjusting text speed!","I hope you like the game!"];
+    let i=0;
+    demoTimer=setInterval(()=>{
+      textSpeedDemo.textContent=msgs[i++];
+      if(i>=msgs.length) clearDemo();
+    },Math.max(60,600-settings.textSpeed*5));
+  }
+
+  if(id==="autoSpeed"){
+    showDemo("autoSpeedDemo");
+    const msgs=["Auto mode preview line 1","Auto mode preview line 2","Auto mode preview line 3"];
+    let i=0;
+    demoTimer=setInterval(()=>{
+      autoSpeedDemo.textContent=msgs[i];
+      i=(i+1)%msgs.length;
+    },Math.max(60,700-settings.autoSpeed*6));
+  }
+}
+
+["bgmVolume","sfxVolume","voiceVolume","textSpeed","autoSpeed","fontSize","skipUnread","fullscreen","darkMode"]
+.forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener(el.type==="checkbox"?"change":"input",()=>updateSetting(id));
+});
+
+window.onload=()=>{
+  const saved=JSON.parse(localStorage.getItem("vnSettings"))||defaultSettings;
+  for(let key in saved){
+    const el=document.getElementById(key);
+    if(!el) continue;
+    el.type==="checkbox"?el.checked=saved[key]:el.value=saved[key];
+  }
+  applySettings(saved);
+};
 </script>
 
 </body>
