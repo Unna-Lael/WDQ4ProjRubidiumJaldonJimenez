@@ -168,6 +168,66 @@ body.dark-mode .demo-box{
   border:1px solid var(--dark-accent);
   color:var(--dark-accent);
 }
+/* ===== AESTHETIC TOGGLE SWITCH ===== */
+
+.toggle{
+  position:relative;
+  display:inline-block;
+  width:58px;
+  height:30px;
+  margin-top:8px;
+}
+
+.toggle input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.toggle-slider{
+  position:absolute;
+  inset:0;
+  background:#ffd4e6;
+  border-radius:30px;
+  cursor:pointer;
+  transition:all .3s ease;
+  border:2px solid var(--accent);
+}
+
+.toggle-slider::before{
+  content:"";
+  position:absolute;
+  height:22px;
+  width:22px;
+  left:3px;
+  top:50%;
+  transform:translateY(-50%);
+  background:white;
+  border-radius:50%;
+  transition:all .3s ease;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* WHEN CHECKED */
+.toggle input:checked + .toggle-slider{
+  background:var(--accent);
+}
+
+.toggle input:checked + .toggle-slider::before{
+  transform:translate(26px,-50%);
+}
+
+/* ===== DARK MODE TOGGLE STYLE ===== */
+
+body.dark-mode .toggle-slider{
+  background:#593c7f;
+  border:2px solid var(--dark-accent);
+}
+
+body.dark-mode .toggle input:checked + .toggle-slider{
+  background:var(--dark-accent);
+}
+
 
 </style>
 </head>
@@ -224,19 +284,28 @@ body.dark-mode .demo-box{
 
 <div class="setting">
 <label>Skip Unread Text</label>
-<input type="checkbox" id="skipUnread">
+<label class="toggle">
+  <input type="checkbox" id="skipUnread">
+  <span class="toggle-slider"></span>
+</label>
 <div class="demo-box" id="skipDemo"></div>
 </div>
 
 <div class="setting">
 <label>Fullscreen Mode</label>
-<input type="checkbox" id="fullscreen">
+<label class="toggle">
+  <input type="checkbox" id="fullscreen">
+  <span class="toggle-slider"></span>
+</label>
 <div class="demo-box" id="fsDemo"></div>
 </div>
 
 <div class="setting">
 <label>Dark Mode</label>
-<input type="checkbox" id="darkMode">
+<label class="toggle">
+  <input type="checkbox" id="darkMode">
+  <span class="toggle-slider"></span>
+</label>
 <div class="demo-box" id="darkDemo"></div>
 </div>
 

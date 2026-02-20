@@ -185,9 +185,21 @@ body{
   .fields{max-width:140px; font-size:16px;}
   .nav-item{font-size:16px; padding:8px 14px;}
 }
+
+body.dark-mode {
+  background: linear-gradient(180deg,#1f1f2f,#2b2b45);
+  color:#f0dfff;
+}
+
+body.dark-mode .sidebar { background: rgba(60,50,90,0.7); }
+body.dark-mode .nav-btn { 
+  background:#593c7f; 
+  color:#c484ff; 
+  border:2px solid #c484ff;
+}
 </style>
 </head>
-
+<script src="global.js"></script>
 <body>
 <div class="navbar">
   <a href="index.html"><div class="nav-item">Home</div></a>
