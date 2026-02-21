@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Boy MC Scene</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -41,64 +40,61 @@ body {
 
 .character-container {
   position: fixed;
-  bottom: -3%;        /* slightly lower to crop legs */
+  bottom: -2%;
   left: 50%;
   transform: translateX(-50%);
-  width: 50%;          /* smaller than full width for natural scale */
-  height: 130vh;       /* taller container so sprite fits */
-  overflow: hidden;    /* crops legs nicely */
+  width: 50%;
+  height: 100vh;   /* changed from 130vh */
+  overflow: hidden;
   z-index: 2;
 }
 
 .character {
   position: absolute;
-  bottom: -33%;        /* sink sprite so legs are cropped */
-  width: 100%;         /* scales sprite to container width */
+  bottom: -30%;
+  width: 100%;
   height: auto;
   opacity: 0;
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-
 /* Textbox */
 .textbox {
   position: fixed;
-  bottom: 18px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
   max-width: 880px;
-  height: 150px;
-
+  min-height: 120px;   /* instead of fixed height */
+  padding: 18px 22px 28px;
   background:
     linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.08) 100%),
     radial-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
     rgba(200,230,255,0.95);
   background-size: 100% 100%, 6px 6px, auto;
-
   border-radius: 18px;
-  padding: 22px 26px 30px;
   box-shadow: 0 0 25px rgba(100,180,230,0.5);
   z-index: 3;
   display: none;
-
   color: #0655a3;
   font-weight: 600;
   font-size: 0.95rem;
   border: 2px solid #7ec0ee;
   line-height: 1.45;
+  overflow-wrap: break-word;
 }
 
 /* Namebox */
 .namebox {
   position: absolute;
-  top: -36px;
-  left: 22px;
+  top: -32px;
+  left: 18px;
   background: rgba(173,216,230,0.95);
-  padding: 8px 18px;
+  padding: 6px 14px;
   border-radius: 10px;
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1rem;
   border: 1px solid #87cefa;
 }
 
@@ -113,18 +109,16 @@ body {
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-.letter {
-  -webkit-text-stroke: 0.4px white;
-}
+.letter { -webkit-text-stroke: 0.4px white; }
 
 /* Choices */
 .choices {
   position: fixed;
-  bottom: 190px;
+  bottom: 180px;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  max-width: 520px;
+  max-width: 480px;
   display: none;
   flex-direction: column;
   gap: 10px;
@@ -133,7 +127,7 @@ body {
 .choice {
   background: rgba(220,235,255,0.95);
   border: 2px solid #7ec0ee;
-  padding: 12px;
+  padding: 10px;
   border-radius: 14px;
   font-weight: 700;
   color: #0655a3;
@@ -146,10 +140,10 @@ body {
 /* Hint button */
 .hint-btn {
   position: absolute;
-  bottom: 12px;
-  right: 14px;
-  width: 28px;
-  height: 28px;
+  bottom: 8px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: #7ec0ee;
   color: white;
@@ -158,7 +152,6 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-
   opacity: 0;
   transform: scale(0.6);
   pointer-events: none;
@@ -186,15 +179,15 @@ body {
   background: rgba(220,235,255,0.97);
   border: 2px solid #7ec0ee;
   border-radius: 18px;
-  padding: 24px;
-  width: 80%;
-  max-width: 520px;
+  padding: 22px;
+  width: 85%;
+  max-width: 480px;
   color: #0655a3;
   font-weight: 600;
 }
 .hint-box button {
-  margin-top: 16px;
-  padding: 8px 16px;
+  margin-top: 14px;
+  padding: 6px 14px;
   border-radius: 10px;
   border: none;
   background: #7ec0ee;
@@ -204,20 +197,19 @@ body {
 }
 
 /* Smooth text appearance */
-.textbox, .character {
-  will-change: opacity, transform;
-}
+.textbox, .character { will-change: opacity, transform; }
 
-body.dark-mode {
-  background: linear-gradient(180deg,#1f1f2f,#2b2b45);
-  color:#f0dfff;
-}
+/* Dark mode */
+body.dark-mode { background: linear-gradient(180deg,#1f1f2f,#2b2b45); color:#f0dfff; }
+body.dark-mode .nav-btn { background:#593c7f; color:#c484ff; border:2px solid #c484ff; }
 
-body.dark-mode .sidebar { background: rgba(60,50,90,0.7); }
-body.dark-mode .nav-btn { 
-  background:#593c7f; 
-  color:#c484ff; 
-  border:2px solid #c484ff;
+/* --- MEDIA QUERIES FOR PHONES --- */
+@media (max-width: 480px) {
+  .textbox { font-size: 0.85rem; padding: 16px 18px 24px; }
+  .namebox { font-size: 0.9rem; top: -28px; left: 14px; padding: 5px 12px; }
+  .choices { bottom: 140px; gap: 8px; }
+  .choice { padding: 8px; font-size: 0.9rem; }
+  .hint-btn { bottom: 6px; right: 8px; width: 24px; height: 24px; }
 }
 </style>
 </head>
@@ -247,8 +239,8 @@ body.dark-mode .nav-btn {
 </div>
 
 <script>
+// Same JS logic as original; no changes needed
 const mcName = localStorage.getItem("playerName") || "MC";
-
 const bg = document.getElementById("bg");
 const fade = document.getElementById("fade");
 const textbox = document.getElementById("textbox");
@@ -260,151 +252,62 @@ const hintBtn = document.getElementById("hintBtn");
 const hintModal = document.getElementById("hintModal");
 const closeHint = document.getElementById("closeHint");
 
-let currentLine = 0;
-let typing = false;
-let index = 0;
-let interval;
-let autoTimer;
-let inChoice = false;
-let modalOpen = false;
+let currentLine = 0, typing = false, index = 0, interval, autoTimer, inChoice = false, modalOpen = false;
 
-/* --- Background transition --- */
-function setBackground(src) {
-  fade.style.opacity = 1;
-  setTimeout(() => {
-    bg.style.backgroundImage = `url(${src})`;
-    fade.style.opacity = 0;
-  }, 600);
+function setBackground(src) { fade.style.opacity = 1; setTimeout(() => { bg.style.backgroundImage = `url(${src})`; fade.style.opacity = 0; }, 600); }
+
+function typeLine(text,speed=26){
+  clearInterval(interval); clearTimeout(autoTimer); typing=true; index=0;
+  textContent.innerHTML=""; const cursor=document.createElement("span"); cursor.className="cursor"; textContent.appendChild(cursor);
+  interval=setInterval(()=>{
+    if(index<text.length){
+      const span=document.createElement("span"); span.textContent=text[index++]; span.className="letter"; textContent.insertBefore(span,cursor);
+    } else { clearInterval(interval); typing=false; autoTimer=setTimeout(()=>{ if(!inChoice&&!modalOpen){currentLine++; showNext();} },1200);}
+  },speed);
 }
 
-/* --- Typing effect --- */
-function typeLine(text, speed = 26) {
-  clearInterval(interval);
-  clearTimeout(autoTimer);
-  typing = true;
-  index = 0;
-  textContent.innerHTML = "";
+textbox.addEventListener("click",()=>{ if(typing){clearInterval(interval); textContent.textContent=script[currentLine].text; typing=false; return;} if(!inChoice&&!modalOpen){clearTimeout(autoTimer); currentLine++; showNext();} });
 
-  const cursor = document.createElement("span");
-  cursor.className = "cursor";
-  textContent.appendChild(cursor);
+hintBtn.onclick=()=>{ modalOpen=true; hintModal.style.display="flex"; };
+closeHint.onclick=()=>{ modalOpen=false; hintModal.style.display="none"; };
 
-  interval = setInterval(() => {
-    if (index < text.length) {
-      const span = document.createElement("span");
-      span.textContent = text[index++];
-      span.className = "letter";
-      textContent.insertBefore(span, cursor);
-    } else {
-      clearInterval(interval);
-      typing = false;
-      autoTimer = setTimeout(() => {
-        if (!inChoice && !modalOpen) {
-          currentLine++;
-          showNext();
-        }
-      }, 1200);
-    }
-  }, speed);
-}
-
-/* --- Click to skip typing --- */
-textbox.addEventListener("click", () => {
-  if (typing) {
-    clearInterval(interval);
-    textContent.textContent = script[currentLine].text;
-    typing = false;
-    return;
-  }
-  if (!inChoice && !modalOpen) {
-    clearTimeout(autoTimer);
-    currentLine++;
-    showNext();
-  }
-});
-
-/* --- Hint modal --- */
-hintBtn.onclick = () => {
-  modalOpen = true;
-  hintModal.style.display = "flex";
-};
-closeHint.onclick = () => {
-  modalOpen = false;
-  hintModal.style.display = "none";
-};
-
-/* --- Choices --- */
-function showChoices(options) {
-  inChoice = true;
+function showChoices(options){
+  inChoice=true;
   hintBtn.classList.add("show");
-  choicesBox.innerHTML = "";
-  choicesBox.style.display = "flex";
-  options.forEach(opt => {
-    const btn = document.createElement("div");
-    btn.className = "choice";
-    btn.textContent = opt.text;
-    btn.onclick = () => {
-      inChoice = false;
-      hintBtn.classList.remove("show");
-      choicesBox.style.display = "none";
-      currentLine++;  // ensure next line is shown
-      opt.callback();
-    };
+  choicesBox.innerHTML="";
+  choicesBox.style.display="flex";
+  options.forEach(opt=>{
+    const btn=document.createElement("div"); btn.className="choice"; btn.textContent=opt.text;
+    btn.onclick=()=>{ inChoice=false; hintBtn.classList.remove("show"); choicesBox.style.display="none"; currentLine++; opt.callback(); };
     choicesBox.appendChild(btn);
   });
 }
 
-/* --- Script --- */
-const script = [
-  { bg: "assets/backgrounds/bedroombg.webp", auto: true },
-  { name: mcName, text: "…Great. I’m awake." },
-  { name: mcName, text: "Another day of consciousness. Thrilling." },
-  { name: mcName, text: "If I skip school, future me suffers." },
-  { name: mcName, text: "But if I don't skip school, present me suffers." },
-  { name: mcName, text: "And unfortunately, future me and present me are both me." },
-  { name: mcName, text: "Whatever. Alright. Get up. Hate everything later." },
-  { bg: "assets/backgrounds/hsbuildingfront.webp", auto: true },
-  { char: true, name: "English", text: "Hey! You left me behind again!" },
-  { name: mcName, text: "(Oh. It's English. My friend through thick and thin, though she can be a little overdramatic sometimes.)" },
-  { name: mcName, text: "(Like now.)" },
-  { name: "English", text: "Well? What do you have to say for yourself, mister?", choice: true }
+const script=[
+  { bg:"assets/backgrounds/bedroombg.webp", auto:true },
+  { name:mcName, text:"…Great. I’m awake." },
+  { name:mcName, text:"Another day of consciousness. Thrilling." },
+  { name:mcName, text:"If I skip school, future me suffers." },
+  { name:mcName, text:"But if I don't skip school, present me suffers." },
+  { name:mcName, text:"And unfortunately, future me and present me are both me." },
+  { name:mcName, text:"Whatever. Alright. Get up. Hate everything later." },
+  { bg:"assets/backgrounds/hsbuildingfront.webp", auto:true },
+  { char:true, name:"English", text:"Hey! You left me behind again!" },
+  { name:mcName, text:"(Oh. It's English. My friend through thick and thin, though she can be a little overdramatic sometimes.)" },
+  { name:mcName, text:"(Like now.)" },
+  { name:"English", text:"Well? What do you have to say for yourself, mister?", choice:true }
 ];
 
-/* --- Show next line --- */
-function showNext() {
-  if (currentLine >= script.length) return;
-  const line = script[currentLine];
-
-  if (line.bg) setBackground(line.bg);
-  if (line.char !== undefined) character.style.opacity = line.char ? 1 : 0;
-
-  if (line.auto && !line.text) {
-    setTimeout(() => {
-      currentLine++;
-      showNext();
-    }, 700);
-    return;
-  }
-
-  if (line.text) {
-    textbox.style.display = "block";
-    namebox.textContent = line.name || "";
-    typeLine(line.text);
-  }
-
-  if (line.choice) {
-    clearTimeout(autoTimer);
-    setTimeout(() => {
-      showChoices([
-        { text: "Apologize", callback: showNext },
-        { text: "Stay silent", callback: showNext },
-        { text: "Snark.", callback: showNext }
-      ]);
-    }, 700);
-  }
+function showNext(){
+  if(currentLine>=script.length) return;
+  const line=script[currentLine];
+  if(line.bg) setBackground(line.bg);
+  if(line.char!==undefined) character.style.opacity=line.char?1:0;
+  if(line.auto&&!line.text){ setTimeout(()=>{ currentLine++; showNext(); },700); return; }
+  if(line.text){ textbox.style.display="block"; namebox.textContent=line.name||""; typeLine(line.text); }
+  if(line.choice){ clearTimeout(autoTimer); setTimeout(()=>{ showChoices([ { text:"Apologize", callback:showNext }, { text:"Stay silent", callback:showNext }, { text:"Snark.", callback:showNext } ]); },700);}
 }
 
-/* --- Initialize --- */
 setBackground("assets/backgrounds/bedroombg.webp");
 showNext();
 </script>
