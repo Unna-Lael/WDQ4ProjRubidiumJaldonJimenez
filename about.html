@@ -108,7 +108,6 @@ body{
   padding:40px;
   overflow-y:auto;
   text-align:center;
-  color:var(--yellow);
   font-size:30px;
   font-family:'Pacifico',cursive;
   box-sizing:border-box;
@@ -123,6 +122,18 @@ body{
   background: var(--accent);
   border-radius:12px;
   border:3px solid rgba(255,255,255,0.2);
+}
+
+.scroll-area h2 {
+  margin-bottom:20px;
+  color: var(--accent);
+}
+
+.scroll-area .panel-text {
+  text-align:left;
+  font-size:18px;
+  line-height:1.7;
+  color: var(--yellow); /* light mode */
 }
 
 .underline{
@@ -217,25 +228,54 @@ body{
 .comment-box h4{margin:0;font-size:16px;font-weight:700;}
 .comment-box p{margin:0;font-size:14px;line-height:1.4;}
 
+/* DARK MODE */
 body.dark-mode {
   background: linear-gradient(180deg,#1f1f2f,#2b2b45);
   color:#f0dfff;
 }
 
-body.dark-mode .sidebar { background: rgba(60,50,90,0.7); }
+body.dark-mode .scroll-area .panel-text {
+  color:#f0dfff;
+}
+
+body.dark-mode .scroll-area h2 {
+  color:#c484ff;
+}
+
 body.dark-mode .nav-btn { 
   background:#593c7f; 
   color:#c484ff; 
   border:2px solid #c484ff;
 }
 
+body.dark-mode .feedback-container {
+  background: rgba(60,50,90,0.7);
+  border:2px solid #c484ff;
+  box-shadow:0 8px 18px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .feedback-section input,
+body.dark-mode .feedback-section textarea {
+  background: rgba(100,80,140,0.7);
+  color:#f0dfff;
+  border:2px solid #c484ff;
+}
+
+body.dark-mode .feedback-section input::placeholder,
+body.dark-mode .feedback-section textarea::placeholder {
+  color:#ccc;
+}
+
+body.dark-mode .comment-box {
+  background: linear-gradient(120deg,#593c7f,#8b5fcf);
+  border:2px solid #c484ff;
+  color:#f0dfff;
+}
 </style>
 
-<!-- EMAILJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-</head>
 <script src="global.js"></script>
+</head>
 <body>
 
 <!-- HEADER + NAV -->
@@ -256,8 +296,8 @@ body.dark-mode .nav-btn {
   <div class="panel">
     <div class="scroll-area">
       <div>
-        <h2 style="margin-bottom:20px;">Text goes here!</h2>
-        <div style="text-align:left; font-size:18px; line-height:1.7; color:var(--yellow);">
+        <h2>Text goes here!</h2>
+        <div class="panel-text">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia lacus ut purus dignissim, et tincidunt dolor sollicitudin. Morbi ut urna ac justo fermentum dictum. Curabitur convallis, sem a dapibus vehicula, nisl odio lacinia leo, ac facilisis libero nulla nec quam. Proin bibendum nulla sit amet erat feugiat, eget efficitur libero cursus.
         </div>
         <br>(LOGO AT BOTTOM!)
@@ -284,7 +324,7 @@ body.dark-mode .nav-btn {
 </div>
 
 <script>
-emailjs.init("U_WTdl28O_06b-geu"); // your public key
+emailjs.init("U_WTdl28O_06b-geu");
 
 const commentsDisplay = document.getElementById('commentsDisplay');
 
@@ -293,10 +333,8 @@ function submitComment() {
   const comment = document.getElementById('comment').value.trim();
   if(!username || !comment) return alert("Please fill in both fields!");
 
-  // Add comment to display immediately
   addCommentBox(username, comment);
 
-  // Send email using EmailJS
   emailjs.send("service_1xd4z1h", "template_rxksu2i", {
     username: username,
     comment: comment
@@ -304,7 +342,6 @@ function submitComment() {
   .then(res => { console.log("Email sent!", res.status, res.text); })
   .catch(err => { console.log("Email error", err); });
 
-  // Clear form
   document.getElementById('username').value = '';
   document.getElementById('comment').value = '';
 }
@@ -319,5 +356,6 @@ function addCommentBox(username, comment){
   box.scrollIntoView({behavior:'smooth', block:'end'});
 }
 </script>
+
 </body>
 </html>
