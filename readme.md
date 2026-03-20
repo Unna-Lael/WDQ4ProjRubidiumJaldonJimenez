@@ -154,3 +154,6 @@ Our project will be done when we have a fully polished, enjoyable, interesting d
 By: **Unna Lael Jaldon** and **Alpha Celestine Jimenez** of *9 - Rubidium* 
 
 ## Subject to Love!
+
+## ***Localstorage updating***
+
