@@ -149,3 +149,8 @@ By: **Unna Lael Jaldon** and **Alpha Celestine Jimenez** of *9 - Rubidium*
 
 ## ***Definition of Done***
 Our project will be done when we have a fully polished, enjoyable, interesting dating sim that anyone can play. We want to make it fun and heartfelt, while letting the player customize the website to their liking (colors, dialogue, etc.), to take off the burden of reality for just a little while.
+
+# FINAL MODIFICATION PROPOSAL 
+By: **Unna Lael Jaldon** and **Alpha Celestine Jimenez** of *9 - Rubidium* 
+
+## Subject to Love!
