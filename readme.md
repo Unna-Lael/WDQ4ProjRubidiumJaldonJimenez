@@ -159,7 +159,7 @@ By: **Unna Lael Jaldon** and **Alpha Celestine Jimenez** of *9 - Rubidium*
 We wanted to make a dating sim that could be played in your browser, totally free and functional! It's mainly supposed to be used to have fun and to take your mind off of things. The design is inspired by other visual novels such as Doki Doki Literature Club, Danganronpa, etc.
 
 ## ***Localstorage updating***
-We're going to use the CRUD operations in the followinf webpages: About the Game, Play, and Notebook!
+We're going to use the CRUD operations in the following webpages: About the Game, Play, and Notebook!
 
 -**About the Game**: Since we added a forum thing from last quarter in this webpage, we're going to modify it so that the user can add, delete and edit their own notes, saving the new and improved ones to localStorage. We'll also add a rating system for the game!
 
