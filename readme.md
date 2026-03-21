@@ -170,4 +170,8 @@ We're going to use the CRUD operations in the following webpages: About the Game
 ## ***WIREFRAME (Updated)***
 [Click here!](https://www.canva.com/design/DAG3JuFmKzE/Ik5zgKS65P_vFvCoF-FDXA/edit?utm_content=DAG3JuFmKzE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
+**CHECK OUT THE FOLLOWING** 
+-About the Game 
+-Play
+-Notebook
 
