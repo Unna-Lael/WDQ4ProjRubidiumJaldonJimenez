@@ -168,6 +168,6 @@ We're going to use the CRUD operations in the following webpages: About the Game
 -**Notebook**: Much like the about the game page, this one will have the same idea, except the player will make their own notes on certain characters they want to add to! It'll be at the bottom of the information.
 
 ## ***WIREFRAME (Updated)***
-
+[Click here!](https://www.canva.com/design/DAG3JuFmKzE/Ik5zgKS65P_vFvCoF-FDXA/edit?utm_content=DAG3JuFmKzE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 
