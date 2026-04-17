@@ -77,8 +77,10 @@
     .panel-text { font-family: 'Poppins', sans-serif; font-size: 18px; color: white; text-align: left; }
 
     /* RATING SYSTEM */
-    .rating-stars { font-size: 30px; margin: 10px 0; cursor: pointer; color: white; }
-    .star.selected { color: var(--yellow); text-shadow: 0 0 5px orange; }
+    .rating-stars { font-size: 40px; margin: 10px 0; cursor: pointer; color: white; }
+    .star { transition: color 0.2s, transform 0.2s; display: inline-block; }
+    .star:hover { transform: scale(1.2); }
+    .star.selected { color: var(--yellow); text-shadow: 0 0 10px orange; }
 
     /* FEEDBACK FORM */
     .feedback-container {
@@ -89,10 +91,12 @@
     .feedback-section input, .feedback-section textarea {
       width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px;
       border: 2px solid var(--accent); box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
     }
     .feedback-section button {
       background: var(--pink-2); color: var(--accent); border: 2px solid var(--accent);
       padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%;
+      font-family: 'Poppins', sans-serif;
     }
     .feedback-section button:hover { background: var(--accent); color: white; }
 
@@ -102,6 +106,7 @@
       background: linear-gradient(120deg, #ffbdd2, #ff8fb3);
       border: 2px solid var(--accent); border-radius: 12px;
       padding: 15px; margin-bottom: 10px; color: #fff; position: relative;
+      font-family: 'Poppins', sans-serif;
     }
     .comment-actions { margin-top: 10px; display: flex; gap: 10px; }
     .action-btn {
@@ -173,4 +178,87 @@
 
   // Star Rating Logic
   const stars = document.querySelectorAll('.star');
-  stars.forEach(
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.getAttribute('data-value'));
+      updateStars(selectedRating);
+    });
+  });
+
+  function updateStars(rating) {
+    stars.forEach(s => {
+      const val = parseInt(s.getAttribute('data-value'));
+      if (val <= rating) {
+        s.classList.add('selected');
+      } else {
+        s.classList.remove('selected');
+      }
+    });
+  }
+
+  // Load from localStorage
+  window.onload = () => {
+    const saved = JSON.parse(localStorage.getItem('gameFeedback')) || [];
+    saved.forEach(item => renderComment(item));
+  };
+
+  function submitComment() {
+    const user = document.getElementById('username').value.trim();
+    const msg = document.getElementById('comment').value.trim();
+
+    if (!user || !msg || selectedRating === 0) {
+      alert("Please enter a name, comment, and star rating!");
+      return;
+    }
+
+    const feedback = {
+      id: Date.now(),
+      username: user,
+      comment: msg,
+      rating: selectedRating
+    };
+
+    // Save to localStorage
+    const saved = JSON.parse(localStorage.getItem('gameFeedback')) || [];
+    saved.push(feedback);
+    localStorage.setItem('gameFeedback', JSON.stringify(saved));
+
+    renderComment(feedback);
+
+    // Reset Form
+    document.getElementById('username').value = '';
+    document.getElementById('comment').value = '';
+    selectedRating = 0;
+    updateStars(0);
+  }
+
+  function renderComment(data) {
+    const box = document.createElement('div');
+    box.className = 'comment-box';
+    box.id = `comment-${data.id}`;
+    
+    const starStr = "★".repeat(data.rating) + "☆".repeat(5 - data.rating);
+
+    box.innerHTML = `
+      <div style="display:flex; justify-content:space-between; font-weight:bold;">
+        <span>${data.username}</span>
+        <span style="color:var(--yellow)">${starStr}</span>
+      </div>
+      <p style="margin: 10px 0;">${data.comment}</p>
+      <div class="comment-actions">
+        <button class="action-btn" onclick="deleteComment(${data.id})">Delete</button>
+      </div>
+    `;
+    commentsDisplay.prepend(box);
+  }
+
+  function deleteComment(id) {
+    let saved = JSON.parse(localStorage.getItem('gameFeedback')) || [];
+    saved = saved.filter(item => item.id !== id);
+    localStorage.setItem('gameFeedback', JSON.stringify(saved));
+    document.getElementById(`comment-${id}`).remove();
+  }
+</script>
+
+</body>
+</html>
