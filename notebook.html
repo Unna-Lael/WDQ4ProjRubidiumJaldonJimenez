@@ -33,6 +33,7 @@ body{
   background:#ffb6d5; color:white; font-weight:700;
   padding:10px 18px; border-radius:18px; font-size:18px;
   cursor:pointer;
+  text-decoration: none;
 }
 .nav-item:active{transform:scale(.95)}
 
@@ -89,11 +90,9 @@ body{
   position:relative;
   background:var(--page-bg);
   background-image:repeating-linear-gradient(white, white 26px, #f5a6b8 27px);
-  box-shadow:inset 0 0 0 rgba(0,0,0,0);
   overflow:hidden;
 }
 
-/* ALT PAGE STYLES */
 .alt-left{
   background-image:
     repeating-linear-gradient(white, white 24px, #b6d8f2 25px),
@@ -105,12 +104,7 @@ body{
     linear-gradient(135deg, rgba(199,240,194,.25), transparent 60%);
 }
 
-/* SPINE */
 .spine{width:20px; background:#d88aa6; box-shadow:inset 0 0 8px rgba(0,0,0,0.2);}
-
-/* PAGE SHADOWS */
-.notebook.flip-next .right{box-shadow:-25px 0 30px rgba(0,0,0,.25);}
-.notebook.flip-prev .left{box-shadow:25px 0 30px rgba(0,0,0,.25);}
 
 /* ENTRIES */
 .entry{
@@ -123,36 +117,61 @@ body{
 }
 .entry img{width:100%; height:100%; object-fit:cover; border-radius:inherit;}
 
-.left .entry.top{top:60px; left:30px; transform:rotate(-2deg)}
-.left .entry.bottom{bottom:60px; left:30px; transform:rotate(2deg)}
-.right .entry.top{top:60px; right:30px; transform:rotate(2deg)}
-.right .entry.bottom{bottom:60px; right:30px; transform:rotate(-2deg)}
+/* Position Adjustments */
+.left .entry.top{top:40px; left:30px; transform:rotate(-2deg)}
+.left .entry.bottom{bottom:40px; left:30px; transform:rotate(2deg)}
+.right .entry.top{top:40px; right:30px; transform:rotate(2deg)}
+.right .entry.bottom{bottom:40px; right:30px; transform:rotate(-2deg)}
 
-/* FIELDS */
+/* FIELDS & NOTES */
 .fields{
   position:absolute;
   font-family:'Caveat',cursive;
   font-size:18px;
-  line-height:1.5;
-  max-width:200px;
+  line-height:1.3;
+  width:220px;
 }
-.fields div{margin-bottom:6px; word-wrap:break-word}
-
-.left .fields.top{top:90px; left:240px}
-.left .fields.bottom{bottom:80px; left:240px}
-.right .fields.top{top:90px; right:240px}
-.right .fields.bottom{bottom:80px; right:240px}
-
+.fields div{margin-bottom:2px; word-wrap:break-word}
 .label{color:#f08ca8; font-weight:700}
 
-/* DECORATIONS */
-.decoration{position:absolute; font-size:32px; text-shadow:2px 2px #fff}
-.bunny{top:20px; left:40px}
-.stars{top:20px; left:90px}
-.flower-purple{top:110px; right:25px}
-.flower-brown{bottom:35px; right:25px}
+/* USER NOTES STYLING */
+.user-notes-area {
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+}
+.user-notes-area label {
+  font-size: 14px;
+  color: #ff4c94;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+.user-notes-area textarea {
+  width: 100%;
+  height: 50px;
+  border: 1px dashed #ff4c94;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 5px;
+  font-family: 'Caveat', cursive;
+  font-size: 16px;
+  resize: none;
+  outline: none;
+}
 
-/* PAGE ARROWS */
+.left .fields.top{top:40px; left:230px}
+.left .fields.bottom{bottom:40px; left:230px}
+.right .fields.top{top:40px; right:230px}
+.right .fields.bottom{bottom:40px; right:230px}
+
+/* DECORATIONS */
+.decoration{position:absolute; font-size:32px; text-shadow:2px 2px #fff; z-index: 5;}
+.bunny{top:10px; left:15px}
+.stars{top:10px; left:60px}
+.flower-purple{top:100px; right:15px}
+.flower-brown{bottom:25px; right:15px}
+
+/* ARROWS */
 .table-arrows{
   position:fixed; top:50%; left:0; right:0;
   pointer-events:none; z-index:40;
@@ -169,74 +188,68 @@ body{
   box-shadow:0 6px 12px rgba(0,0,0,.25);
   transition:transform .15s, opacity .2s;
 }
-.arrow:active{transform:scale(.9)}
 .arrow.disabled{opacity:.35; pointer-events:none}
-.left-arrow{left:calc(50% - 520px)}
-.right-arrow{left:calc(50% + 460px)}
+.left-arrow{left:calc(50% - 560px)}
+.right-arrow{left:calc(50% + 500px)}
 
-/* SCROLLBAR (FOR LONG PAGES IF NEEDED) */
-.scroll{position:absolute; right:-26px; top:0; width:18px; height:100%; background:#ffc0d9; border:2px solid #f08ca8; border-radius:12px}
-.thumb{width:100%; height:120px; background:#f08ca8; border-radius:10px; position:absolute; top:0}
-
-/* RESPONSIVE */
-@media (max-width:800px){
-  .notebook{width:95%; height:500px;}
-  .entry{width:140px; height:180px;}
-  .fields{max-width:140px; font-size:16px;}
-  .nav-item{font-size:16px; padding:8px 14px;}
+/* SAVE BUTTON */
+.save-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(255,76,148,0.4);
+    cursor: pointer;
+    z-index: 100;
 }
+.save-btn:hover { background: #ff2f83; transform: scale(1.05); }
 
-body.dark-mode {
-  background: linear-gradient(180deg,#1f1f2f,#2b2b45);
-  color:#f0dfff;
-}
-
-body.dark-mode .sidebar { background: rgba(60,50,90,0.7); }
-body.dark-mode .nav-btn { 
-  background:#593c7f; 
-  color:#c484ff; 
-  border:2px solid #c484ff;
-}
 </style>
 </head>
-<script src="global.js"></script>
 <body>
+
 <div class="navbar">
-  <a href="index.html"><div class="nav-item">Home</div></a>
-  <a href="about.html"><div class="nav-item">About the Game</div></a>
-  <a href="play.html"><div class="nav-item">PLAY!!</div></a>
-  <a href="notebook.html"><div class="nav-item">Notebook</div></a>
-  <a href="gallery.html"><div class="nav-item">Gallery</div></a>
+  <a href="index.html" class="nav-item">Home</a>
+  <a href="about.html" class="nav-item">About the Game</a>
+  <a href="play.html" class="nav-item">PLAY!!</a>
+  <a href="notebook.html" class="nav-item">Notebook</a>
+  <a href="gallery.html" class="nav-item">Gallery</a>
   <a href="settings.html" class="nav-item">Settings</a>
 </div>
 
 <div class="notebook-wrap">
   <div class="notebook" id="notebook">
 
-    <!-- SPREAD 1 -->
     <div class="spread" id="spread1">
       <div class="page left">
         <div class="decoration bunny">🐰</div>
         <div class="decoration stars">⭐ ⭐</div>
 
-        <div class="entry top">
-          <img src="assets/characters/bio.png" alt="Biology">
-        </div>
+        <div class="entry top"><img src="assets/characters/bio.png" alt="Biology"></div>
         <div class="fields top">
-          <div><span class="label">Name: Biology</span></div>
-          <div><span class="label">Likes: Nature, Silence, Gardening</span></div>
-          <div><span class="label">Dislikes: Noise, Recklessness</span></div>
-          <div><span class="label">Quote: "Let it grow!"</span></div>
+          <div><span class="label">Name:</span> Biology</div>
+          <div><span class="label">Likes:</span> Nature, Silence</div>
+          <div><span class="label">Quote:</span> "Let it grow!"</div>
+          <div class="user-notes-area">
+              <label>User Notes:</label>
+              <textarea data-char="bio" placeholder="Add your notes..."></textarea>
+          </div>
         </div>
 
-        <div class="entry bottom">
-          <img src="assets/characters/chem.png.png" alt="Chemistry">
-        </div>
+        <div class="entry bottom"><img src="assets/characters/chem.png" alt="Chemistry"></div>
         <div class="fields bottom">
-          <div><span class="label">Name: Chemistry</span></div>
-          <div><span class="label">Likes: Potions, Magic, Numbers</span></div>
-          <div><span class="label">Dislikes: Carelessness, Fights, Explosions</span></div>
-          <div><span class="label">Quote: "We have lots of chemistry!"</span></div>
+          <div><span class="label">Name:</span> Chemistry</div>
+          <div><span class="label">Likes:</span> Potions, Magic</div>
+          <div><span class="label">Quote:</span> "We have chemistry!"</div>
+          <div class="user-notes-area">
+              <label>User Notes:</label>
+              <textarea data-char="chem" placeholder="Add your notes..."></textarea>
+          </div>
         </div>
       </div>
 
@@ -244,52 +257,51 @@ body.dark-mode .nav-btn {
 
       <div class="page right">
         <div class="decoration flower-purple">🌸</div>
-        <div class="entry top">
-          <img src="assets/characters/cs.png.png" alt="Computer Science">
-        </div>
+        <div class="entry top"><img src="assets/characters/cs.png" alt="CS"></div>
         <div class="fields top">
-          <div><span class="label">Name: Computer Science</span></div>
-          <div><span class="label">Likes: Technology, Vintage, Video Games</span></div>
-          <div><span class="label">Dislikes: Laziness, Bugs</span></div>
-          <div><span class="label">Quote: "Programming is thinking!"</span></div>
+          <div><span class="label">Name:</span> Comp Science</div>
+          <div><span class="label">Likes:</span> Tech, Games</div>
+          <div><span class="label">Quote:</span> "Think logic!"</div>
+          <div class="user-notes-area">
+              <label>User Notes:</label>
+              <textarea data-char="cs" placeholder="Add your notes..."></textarea>
+          </div>
         </div>
 
-        <div class="entry bottom">
-          <img src="assets/characters/math.png.png" alt="Math">
-        </div>
+        <div class="entry bottom"><img src="assets/characters/math.png" alt="Math"></div>
         <div class="fields bottom">
-          <div><span class="label">Name: Math </span></div>
-          <div><span class="label">Likes: Puzzles, Fountain Pens</span></div>
-          <div><span class="label">Dislikes: Fallacies</span></div>
-          <div><span class="label">Quote: "You're the 1 I'm missing!"</span></div>
+          <div><span class="label">Name:</span> Math</div>
+          <div><span class="label">Likes:</span> Puzzles, Pens</div>
+          <div><span class="label">Quote:</span> "You're the 1!"</div>
+          <div class="user-notes-area">
+              <label>User Notes:</label>
+              <textarea data-char="math" placeholder="Add your notes..."></textarea>
+          </div>
         </div>
-
-        <div class="decoration flower-brown">✳ ✴</div>
       </div>
     </div>
 
-    <!-- SPREAD 2 -->
     <div class="spread" id="spread2">
       <div class="page left alt-left">
         <div class="decoration">📝</div>
-        <div class="entry top">
-          <img src="assets/characters/eng.png" alt="English">
-        </div>
+        <div class="entry top"><img src="assets/characters/eng.png" alt="English"></div>
         <div class="fields top">
-          <div><span class="label">Name: English</span></div>
-          <div><span class="label">Likes: Literature, Cats, Autumn</span></div>
-          <div><span class="label">Dislikes: Raves, Fire</span></div>
-          <div><span class="label">Quote: "'His and mine are the same.'"</span></div>
+          <div><span class="label">Name:</span> English</div>
+          <div><span class="label">Likes:</span> Lit, Cats</div>
+          <div class="user-notes-area">
+              <label>User Notes:</label>
+              <textarea data-char="eng" placeholder="Add your notes..."></textarea>
+          </div>
         </div>
 
-        <div class="entry bottom">
-          <img src="assets/characters/filipino.png" alt="Filipino">
-        </div>
+        <div class="entry bottom"><img src="assets/characters/filipino.png" alt="Filipino"></div>
         <div class="fields bottom">
-          <div><span class="label">Name: Filipino</span></div>
-          <div><span class="label">Likes: Superheroes, Rice, Wildlife</span></div>
-          <div><span class="label">Dislikes: Europeans, Dishonesty</span></div>
-          <div><span class="label">Quote: "Ang hindi marunong lumingon…"</span></div>
+          <div><span class="label">Name:</span> Filipino</div>
+          <div><span class="label">Likes:</span> Rice, Wildlife</div>
+          <div class="user-notes-area">
+              <label>User Notes:</label>
+              <textarea data-char="fil" placeholder="Add your notes..."></textarea>
+          </div>
         </div>
       </div>
 
@@ -297,31 +309,31 @@ body.dark-mode .nav-btn {
 
       <div class="page right alt-right">
         <div class="decoration">📎</div>
-        <div class="entry top">
-          <img src="assets/characters/physics.png" alt="Physics">
-        </div>
+        <div class="entry top"><img src="assets/characters/physics.png" alt="Physics"></div>
         <div class="fields top">
-          <div><span class="label">Name: Physics</span></div>
-          <div><span class="label">Likes: Planes, Basketball, Space</span></div>
-          <div><span class="label">Dislikes: Green Pens, Senselessness</span></div>
-          <div><span class="label">Quote: "What goes up must come down."</span></div>
+          <div><span class="label">Name:</span> Physics</div>
+          <div><span class="label">Likes:</span> Space, Planes</div>
+          <div class="user-notes-area">
+              <label>User Notes:</label>
+              <textarea data-char="physics" placeholder="Add your notes..."></textarea>
+          </div>
         </div>
 
-        <div class="entry bottom">
-          <img src="assets/characters/ss.png" alt="Social Science">
-        </div>
+        <div class="entry bottom"><img src="assets/characters/ss.png" alt="Social Science"></div>
         <div class="fields bottom">
-          <div><span class="label">Name: Social Science</span></div>
-          <div><span class="label">Likes: History, Reading, Coffee</span></div>
-          <div><span class="label">Dislikes: Religion, Bullying</span></div>
-          <div><span class="label">Quote: "We are made by history."</span></div>
+          <div><span class="label">Name:</span> Soc Science</div>
+          <div><span class="label">Likes:</span> History, Coffee</div>
+          <div class="user-notes-area">
+              <label>User Notes:</label>
+              <textarea data-char="ss" placeholder="Add your notes..."></textarea>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="scroll"><div class="thumb" id="thumb"></div></div>
   </div>
 </div>
+
+<button class="save-btn" onclick="saveNotes()">Save All Notes ✨</button>
 
 <div class="table-arrows">
   <div class="arrow left-arrow" id="prevBtn">◀</div>
@@ -332,28 +344,50 @@ body.dark-mode .nav-btn {
 const notebook = document.getElementById('notebook');
 const nextBtn = document.getElementById('nextBtn');
 const prevBtn = document.getElementById('prevBtn');
-const thumb = document.getElementById('thumb');
 
 let page = 1;
+
 function updateUI(){
   nextBtn.classList.toggle('disabled', page===2);
   prevBtn.classList.toggle('disabled', page===1);
-  thumb.style.top = page===1 ? '0%' : '60%';
 }
+
 nextBtn.addEventListener('click', () => {
   if(page!==1) return;
   notebook.classList.remove('flip-prev');
   notebook.classList.add('flip-next');
   page=2; updateUI();
 });
+
 prevBtn.addEventListener('click', () => {
   if(page!==2) return;
   notebook.classList.remove('flip-next');
   notebook.classList.add('flip-prev');
   page=1; updateUI();
 });
-window.addEventListener('keydown', e => { if(e.key==='ArrowRight') nextBtn.click(); if(e.key==='ArrowLeft') prevBtn.click(); });
-updateUI();
+
+// Save and Load Logic
+function saveNotes() {
+    const notes = {};
+    document.querySelectorAll('textarea').forEach(txt => {
+        notes[txt.dataset.char] = txt.value;
+    });
+    localStorage.setItem('user_character_notes', JSON.stringify(notes));
+    alert("Notebook updated! Items saved to memory. ✨");
+}
+
+function loadNotes() {
+    const saved = JSON.parse(localStorage.getItem('user_character_notes'));
+    if (saved) {
+        document.querySelectorAll('textarea').forEach(txt => {
+            if (saved[txt.dataset.char]) {
+                txt.value = saved[txt.dataset.char];
+            }
+        });
+    }
+}
+
+window.onload = loadNotes;
 </script>
 
 </body>
