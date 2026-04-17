@@ -13,7 +13,7 @@ body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden; /* Changed to allow vertical scroll for navbar removal */
   background:
     linear-gradient(#ffdce9, #ffeaf3),
     repeating-linear-gradient(0deg, rgba(255,255,255,0.25) 0 20px, rgba(255,200,220,0.22) 20px 40px),
@@ -75,7 +75,7 @@ body {
 
 /* ===== Navbar ===== */
 .navbar {
-  position: fixed;
+  position: absolute; /* Changed from fixed so user can scroll down to remove */
   top: 0;
   width: 100%;
   z-index: 6;
@@ -87,6 +87,7 @@ body {
   justify-content: center;
   font-size: 14px;
   border-bottom: 2px solid rgba(255,100,150,0.25);
+  box-sizing: border-box;
 }
 
 .navbar a {
@@ -110,7 +111,7 @@ body {
 #selection {
   position: relative;
   z-index: 5;
-  height: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -198,6 +199,7 @@ body {
   align-items: center;
   gap: 20px;
   box-shadow: 0 0 35px rgba(255,160,200,0.5);
+  max-width: 400px;
 }
 
 #name-popup input {
@@ -206,6 +208,8 @@ body {
   border: 2px solid #ff6ea8;
   font-size: 1.2rem;
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #name-popup button {
@@ -222,6 +226,25 @@ body {
 
 #name-popup button:hover {
   background: #ff2f83;
+}
+
+/* ===== NEW: Saved Names Section ===== */
+.saved-names-container {
+  background: #ff4c94;
+  border-radius: 12px;
+  padding: 10px;
+  width: 100%;
+  display: none; /* Shown via JS */
+  flex-direction: column;
+  gap: 5px;
+  margin-top: -10px;
+}
+
+.saved-name-btn {
+  background: white !important;
+  color: #ff4c94 !important;
+  font-size: 0.9rem !important;
+  padding: 5px 10px !important;
 }
 
 /* ===== Loading Screen ===== */
@@ -288,7 +311,6 @@ body.dark-mode .nav-btn {
 <script src="global.js"></script>
 <body>
 
-<!-- ===== Diamond Background ===== -->
 <div class="diamond-bg">
   <div class="diamond"></div><div class="diamond"></div><div class="diamond"></div><div class="diamond"></div>
   <div class="diamond"></div><div class="diamond"></div><div class="diamond"></div><div class="diamond"></div>
@@ -298,7 +320,6 @@ body.dark-mode .nav-btn {
 
 <div class="overlay"></div>
 
-<!-- ===== Navbar ===== -->
 <div class="navbar">
   <a href="index.html">Home</a>
   <a href="about.html">About the Game</a>
@@ -308,7 +329,6 @@ body.dark-mode .nav-btn {
 </div>
 
 
-<!-- ===== Character Selection ===== -->
 <div id="selection">
   <div class="select-box">
     <div class="card" onclick="chooseGender('Male')">Male</div>
@@ -316,16 +336,21 @@ body.dark-mode .nav-btn {
   </div>
 </div>
 
-<!-- ===== Name Popup ===== -->
 <div id="name-popup">
   <div class="popup-box">
     <h2>Enter Your Name</h2>
     <input type="text" id="player-name" placeholder="Your name..." maxlength="12">
-    <button onclick="submitName()">Confirm</button>
+    
+    <div id="saved-names-list" class="saved-names-container">
+      </div>
+    
+    <div style="display:flex; gap:10px;">
+      <button onclick="submitName()">Confirm</button>
+      <button id="show-saved-btn" onclick="toggleSavedList()" style="background:#ffbed8; border:2px solid #ff4c94; color:#ff4c94;">Saved</button>
+    </div>
   </div>
 </div>
 
-<!-- ===== Loading Screen ===== -->
 <div id="loading-screen">
   <div class="bar-wrap">
     <div class="bar" id="bar"></div>
@@ -333,7 +358,6 @@ body.dark-mode .nav-btn {
   <div id="loading-text">Loading...</div>
 </div>
 
-<!-- ===== Wipe Transition ===== -->
 <div id="wipe"></div>
 
 <script>
@@ -345,6 +369,7 @@ const bar = document.getElementById('bar');
 const loadingText = document.getElementById('loading-text');
 const namePopup = document.getElementById('name-popup');
 const wipe = document.getElementById('wipe');
+const savedList = document.getElementById('saved-names-list');
 
 document.querySelectorAll(".card").forEach(card => {
   card.addEventListener("mousemove", e => {
@@ -362,15 +387,49 @@ function chooseGender(g){
   chosenGender = g;
   selection.style.filter = 'blur(5px)';
   namePopup.style.display = 'flex';
+  loadSavedNames();
+}
+
+// NEW: Functions for Saved Names logic
+function loadSavedNames() {
+  const names = JSON.parse(localStorage.getItem('savedNames')) || [];
+  savedList.innerHTML = '';
+  
+  if (names.length === 0) {
+    savedList.innerHTML = '<span style="color:white; font-size:0.8rem;">No names saved yet!</span>';
+  } else {
+    names.forEach(name => {
+      const btn = document.createElement('button');
+      btn.textContent = name;
+      btn.classList.add('saved-name-btn');
+      btn.onclick = () => {
+        document.getElementById('player-name').value = name;
+        toggleSavedList();
+      };
+      savedList.appendChild(btn);
+    });
+  }
+}
+
+function toggleSavedList() {
+  savedList.style.display = (savedList.style.display === 'flex') ? 'none' : 'flex';
 }
 
 function submitName(){
   const input = document.getElementById('player-name');
-  if(input.value.trim() === '') return;
+  const val = input.value.trim();
+  if(val === '') return;
 
-  playerName = input.value.trim();
+  playerName = val;
   localStorage.setItem('playerName', playerName);
   localStorage.setItem('playerGender', chosenGender);
+
+  // Update history of names
+  let names = JSON.parse(localStorage.getItem('savedNames')) || [];
+  if (!names.includes(playerName)) {
+    names.push(playerName);
+    localStorage.setItem('savedNames', JSON.stringify(names));
+  }
 
   namePopup.style.display = 'none';
   selection.style.display = 'none';
