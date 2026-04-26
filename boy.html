@@ -3,311 +3,2915 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Boy MC Scene</title>
+<title>Rubidium</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
+
+/* ============================================================
+   RESET & CSS VARIABLES
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sky:        #c8e8f8;
+  --blue:       #3a8fd4;
+  --blue-dk:    #1a5fa0;
+  --txt:        #0a3a6b;
+  --txt-name:   #083060;
+  --box-bg:     rgba(210,232,252,0.96);
+  --box-border: rgba(100,170,230,0.55);
+  --box-shadow: rgba(80,150,220,0.28);
+  --name-bg:    rgba(170,215,248,0.97);
+  --choice-bg:  rgba(222,240,255,0.97);
+  --choice-hov: rgba(190,224,252,1);
+  --panel-bg:   rgba(220,238,255,0.98);
+  --overlay:    rgba(10,35,70,0.52);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   overflow: hidden;
   height: 100vh;
-  background: #d0f0fd;
+  background: var(--sky);
+  user-select: none;
 }
 
-/* Fade Overlay */
-.fade {
-  position: fixed;
-  inset: 0;
-  background: black;
+/* ============================================================
+   SCENE LAYER
+   ============================================================ */
+#fade {
+  position: fixed; inset: 0;
+  background: #000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s ease;
-  z-index: 10;
+  transition: opacity 0.52s ease;
+  z-index: 90;
 }
 
-/* Background */
-.bg {
-  position: fixed;
-  inset: 0;
-  background-position: center top;
+#bg {
+  position: fixed; inset: 0;
+  background-color: var(--sky);
   background-size: cover;
+  background-position: center top;
   background-repeat: no-repeat;
-  background-color: #d0f0fd;
   z-index: 0;
-  transition: background-image 0.6s ease;
 }
 
 .character-container {
   position: fixed;
-  bottom: -2%;
-  left: 50%;
+  bottom: 0; left: 50%;
   transform: translateX(-50%);
-  width: 50%;
-  height: 100vh;   /* changed from 130vh */
-  overflow: hidden;
+  width: 46%; max-width: 480px;
+  height: 90vh;
   z-index: 2;
+  pointer-events: none;
+  display: flex; align-items: flex-end; justify-content: center;
 }
 
-.character {
-  position: absolute;
-  bottom: -30%;
-  width: 100%;
-  height: auto;
+#character {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
   opacity: 0;
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(12px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
 }
+#character.visible { opacity: 1; transform: translateY(0); }
 
-/* Textbox */
-.textbox {
+/* ============================================================
+   TEXTBOX + TOOLBAR
+   ============================================================ */
+#textbox {
   position: fixed;
-  bottom: 12px;
-  left: 50%;
+  bottom: 14px; left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 880px;
-  min-height: 120px;   /* instead of fixed height */
-  padding: 18px 22px 28px;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.08) 100%),
-    radial-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
-    rgba(200,230,255,0.95);
-  background-size: 100% 100%, 6px 6px, auto;
+  width: 92%; max-width: 900px;
+  min-height: 122px;
+  padding: 18px 22px 40px;
+  background: var(--box-bg);
+  border: 1.5px solid var(--box-border);
   border-radius: 18px;
-  box-shadow: 0 0 25px rgba(100,180,230,0.5);
-  z-index: 3;
+  box-shadow: 0 4px 24px var(--box-shadow), inset 0 1px 0 rgba(255,255,255,.55);
+  z-index: 10;
   display: none;
-  color: #0655a3;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 2px solid #7ec0ee;
-  line-height: 1.45;
-  overflow-wrap: break-word;
+  color: var(--txt);
+  font-size: 1rem; font-weight: 600; line-height: 1.6;
+  cursor: pointer;
+  backdrop-filter: blur(3px);
 }
 
-/* Namebox */
-.namebox {
+#namebox {
   position: absolute;
-  top: -32px;
-  left: 18px;
-  background: rgba(173,216,230,0.95);
-  padding: 6px 14px;
-  border-radius: 10px;
-  font-weight: 800;
-  font-size: 1rem;
-  border: 1px solid #87cefa;
+  top: -34px; left: 16px;
+  background: var(--name-bg);
+  border: 1.5px solid var(--box-border);
+  border-bottom: none;
+  padding: 5px 20px 10px;
+  border-radius: 11px 11px 0 0;
+  font-weight: 700; font-size: .92rem;
+  color: var(--txt-name); letter-spacing: .03em;
+  min-width: 56px; text-align: center; white-space: nowrap;
 }
 
-/* Cursor animation */
-.cursor {
+.tcursor {
   display: inline-block;
-  width: 2px;
-  height: 1em;
-  background: #0655a3;
-  margin-left: 2px;
-  animation: blink 0.8s steps(1) infinite;
+  width: 2px; height: .9em;
+  background: var(--txt); margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: blink .75s steps(1) infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-.letter { -webkit-text-stroke: 0.4px white; }
+#adv {
+  position: absolute; bottom: 38px; right: 14px;
+  font-size: .68rem; color: var(--blue);
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+  animation: abounce .85s ease-in-out infinite;
+}
+#adv.show { opacity: 1; }
+@keyframes abounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(3px)} }
 
-/* Choices */
-.choices {
+#toolbar {
+  position: absolute; bottom: 9px; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 12px 0 64px; gap: 3px;
+  pointer-events: auto;
+}
+.tb-btn {
+  background: none; border: none;
+  color: var(--blue-dk);
+  font-family: 'Poppins', sans-serif;
+  font-size: .68rem; font-weight: 700;
+  cursor: pointer; padding: 3px 7px; border-radius: 6px;
+  transition: background .15s; opacity: .8; letter-spacing: .04em;
+}
+.tb-btn:hover { background: rgba(58,143,212,.13); opacity: 1; }
+.tb-sep { color: rgba(58,143,212,.4); font-size: .65rem; pointer-events: none; }
+
+.bottom-icon-btn {
+  position: absolute;
+  bottom: 9px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--blue); color: #fff;
+  font-weight: 700; font-size: .72rem;
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; line-height: 1;
+  box-shadow: 0 2px 8px rgba(58,143,212,.42);
+  transition: transform .15s, box-shadow .15s;
+}
+.bottom-icon-btn:hover { transform: scale(1.1); box-shadow: 0 3px 12px rgba(58,143,212,.6); }
+
+#tipBtn      { left: 11px; }
+#notebookBtn { left: 38px; font-size: .64rem; display: none; }
+#phoneBtn    { left: 65px; font-size: .62rem; display: none; }
+
+@keyframes iconGlow {
+  0%,100% { box-shadow: 0 2px 8px rgba(58,143,212,.42); transform: scale(1); }
+  50%     { box-shadow: 0 0 0 6px rgba(58,143,212,.18); transform: scale(1.12); }
+}
+.icon-glow { animation: iconGlow 1.6s ease-in-out infinite; }
+
+/* ============================================================
+   CHOICES
+   ============================================================ */
+#choices {
   position: fixed;
-  bottom: 180px;
-  left: 50%;
+  bottom: 168px; left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 480px;
-  display: none;
-  flex-direction: column;
-  gap: 10px;
+  width: 92%; max-width: 500px;
+  display: none; flex-direction: column; gap: 9px;
   z-index: 20;
 }
 .choice {
-  background: rgba(220,235,255,0.95);
-  border: 2px solid #7ec0ee;
-  padding: 10px;
-  border-radius: 14px;
-  font-weight: 700;
-  color: #0655a3;
-  text-align: center;
+  background: var(--choice-bg);
+  border: 1.5px solid var(--box-border);
+  padding: 11px 18px; border-radius: 13px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: .9rem;
+  color: var(--txt); text-align: center;
   cursor: pointer;
-  transition: transform 0.25s ease;
+  transition: background .15s, transform .15s;
+  box-shadow: 0 2px 10px var(--box-shadow);
 }
-.choice:hover { transform: scale(1.03); }
+.choice:hover  { background: var(--choice-hov); transform: scale(1.022); }
+.choice:active { transform: scale(.98); }
 
-/* Hint button */
-.hint-btn {
-  position: absolute;
-  bottom: 8px;
-  right: 12px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #7ec0ee;
-  color: white;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transform: scale(0.6);
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+/* ============================================================
+   SHARED MODAL SHELL
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: var(--overlay);
+  display: none; align-items: center; justify-content: center;
+  z-index: 70; backdrop-filter: blur(3px);
 }
-.hint-btn.show {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-  animation: pulse 1.5s infinite;
+.modal-box {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--box-border);
+  border-radius: 20px;
+  padding: 24px 26px 20px;
+  width: 88%; max-width: 460px; color: var(--txt);
 }
-@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.modal-box h3 {
+  font-size: 1rem; font-weight: 700;
+  color: var(--blue); margin-bottom: 12px; letter-spacing: .03em;
+}
+.modal-close {
+  display: block; width: 100%;
+  margin-top: 14px; padding: 9px;
+  border-radius: 11px;
+  border: 1.5px solid var(--box-border);
+  background: var(--blue); color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: .88rem;
+  cursor: pointer; transition: opacity .2s;
+}
+.modal-close:hover { opacity: .86; }
 
-/* Hint modal */
-.hint-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 30;
+/* ============================================================
+   TIP MODAL
+   ============================================================ */
+.tip-section { margin-bottom: 12px; }
+.tip-section-title {
+  font-size: .68rem; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px;
 }
-.hint-box {
-  background: rgba(220,235,255,0.97);
-  border: 2px solid #7ec0ee;
-  border-radius: 18px;
-  padding: 22px;
-  width: 85%;
-  max-width: 480px;
-  color: #0655a3;
-  font-weight: 600;
+.tip-section p { font-size: .84rem; line-height: 1.65; color: var(--txt); }
+.tip-tag {
+  display: inline-block; padding: 2px 7px;
+  border-radius: 6px; font-size: .68rem; font-weight: 700; margin-right: 4px;
 }
-.hint-box button {
-  margin-top: 14px;
-  padding: 6px 14px;
+.tip-tag.red   { background: rgba(200,60,60,.12);  color: #a02020; }
+.tip-tag.green { background: rgba(30,140,60,.1);   color: #1a6030; }
+.tip-tag.blue  { background: rgba(30,100,200,.1);  color: var(--blue-dk); }
+
+/* ============================================================
+   HISTORY MODAL
+   ============================================================ */
+#historyList {
+  max-height: 52vh; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 7px; margin-top: 2px;
+}
+.hist-entry {
+  background: rgba(200,228,252,.55);
+  border: 1px solid var(--box-border);
   border-radius: 10px;
-  border: none;
-  background: #7ec0ee;
-  color: white;
-  font-weight: 700;
-  cursor: pointer;
+  padding: 8px 11px; font-size: .84rem; line-height: 1.5;
+}
+.hist-name { font-weight: 700; font-size: .76rem; color: var(--blue-dk); margin-bottom: 2px; }
+.hist-text { color: var(--txt); }
+
+/* ============================================================
+   SAVE / LOAD SLOTS
+   ============================================================ */
+.slot-grid { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+.slot-row  {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(200,228,252,.5);
+  border: 1px solid var(--box-border);
+  border-radius: 11px; padding: 8px 12px;
+}
+.slot-num  { font-weight: 700; font-size: .78rem; color: var(--blue-dk); min-width: 38px; }
+.slot-info { flex: 1; font-size: .78rem; color: var(--txt); line-height: 1.4; }
+.slot-date { font-size: .69rem; color: #5a90c0; margin-top: 1px; }
+.slot-act  { display: flex; gap: 5px; }
+.slot-act button {
+  background: var(--blue); color: #fff; border: none;
+  border-radius: 7px; padding: 4px 9px;
+  font-family: 'Poppins', sans-serif; font-size: .68rem; font-weight: 700;
+  cursor: pointer; transition: opacity .15s;
+}
+.slot-act button:hover { opacity: .82; }
+.slot-act button.del { background: #b03030; }
+.slot-empty { color: #7aaac8; font-size: .76rem; }
+
+/* ============================================================
+   SETTINGS PANEL
+   ============================================================ */
+#settingsPanel {
+  position: fixed; inset: 0;
+  background: var(--overlay);
+  display: none; align-items: center; justify-content: center;
+  z-index: 70; backdrop-filter: blur(3px);
+}
+.settings-box {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--box-border);
+  border-radius: 20px; padding: 26px 28px 22px;
+  width: 88%; max-width: 480px; color: var(--txt);
+}
+.settings-box h3 { font-size: 1rem; font-weight: 700; color: var(--blue); margin-bottom: 16px; }
+.sgroup       { margin-bottom: 16px; }
+.sgroup-title { font-size: .68rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; opacity: .8; }
+.srow         { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.srow:last-child { margin-bottom: 0; }
+.slabel       { font-size: .86rem; font-weight: 600; color: var(--txt); }
+.slabel small { display: block; font-size: .72rem; color: #6090b8; font-weight: 400; margin-top: 1px; }
+.srow input[type=range] { width: 120px; accent-color: var(--blue); cursor: pointer; }
+.srow select {
+  font-family: 'Poppins', sans-serif; font-size: .8rem; font-weight: 600;
+  border: 1.5px solid var(--box-border); border-radius: 8px;
+  padding: 4px 8px; background: rgba(220,238,255,.9); color: var(--txt); cursor: pointer;
+}
+.stoggle {
+  width: 40px; height: 22px; border-radius: 99px;
+  background: #bbd8f0; border: none; cursor: pointer;
+  position: relative; transition: background .2s; flex-shrink: 0; padding: 0;
+}
+.stoggle.on { background: var(--blue); }
+.stoggle::after {
+  content: ''; position: absolute;
+  top: 3px; left: 3px; width: 16px; height: 16px;
+  border-radius: 50%; background: #fff;
+  transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.stoggle.on::after { transform: translateX(18px); }
+.sdivider { border: none; border-top: 1px solid var(--box-border); margin: 14px 0; }
+
+/* ============================================================
+   GAME OVER SCREEN
+   ============================================================ */
+#gameOver {
+  position: fixed; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  flex-direction: column; gap: 20px;
+  z-index: 100;
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 40px;
+}
+.go-title {
+  font-size: 1.6rem; font-weight: 700;
+  letter-spacing: .04em; line-height: 1.3;
+}
+.go-sub {
+  font-size: .88rem; font-weight: 400;
+  color: rgba(255,255,255,.65); max-width: 380px; line-height: 1.7;
+}
+.go-badge {
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.35); margin-bottom: -8px;
+}
+.go-restart {
+  padding: 11px 28px; border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,.3);
+  background: rgba(255,255,255,.08); color: #fff;
+  font-family: 'Poppins', sans-serif; font-weight: 700; font-size: .88rem;
+  cursor: pointer; transition: background .2s;
+  margin-top: 8px;
+}
+.go-restart:hover { background: rgba(255,255,255,.15); }
+
+/* ============================================================
+   MINIGAME 1 — ALARM
+   ============================================================ */
+#mgAlarm {
+  position: fixed; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  flex-direction: column;
+  z-index: 80; background: rgba(8,22,50,.8); backdrop-filter: blur(6px);
+}
+.mg-card {
+  background: rgba(218,238,255,.97);
+  border: 2px solid var(--box-border);
+  border-radius: 22px; padding: 30px 26px 26px;
+  text-align: center; width: 85%; max-width: 330px;
+  box-shadow: 0 8px 36px rgba(20,80,160,.26);
+}
+.mg-icon { font-size: 3.5rem; display: inline-block; animation: mgshake .38s ease-in-out infinite; margin-bottom: 2px; }
+.mg-icon.done { animation: none; transform: none; font-size: 3rem; }
+@keyframes mgshake { 0%,100%{transform:rotate(-11deg) scale(1.05)} 50%{transform:rotate(11deg) scale(1.1)} }
+.mg-title { font-size: 1rem; font-weight: 700; color: var(--txt-name); margin-bottom: 4px; }
+.mg-sub   { font-size: .78rem; color: #3a6ea0; margin-bottom: 16px; font-weight: 600; }
+.mg-bar-wrap {
+  width: 100%; height: 12px;
+  background: rgba(140,190,240,.25); border-radius: 99px;
+  margin-bottom: 16px; overflow: hidden;
+  border: 1px solid rgba(100,160,220,.32);
+}
+.mg-bar { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#4aadf0,#2270c8); transition: width .08s ease; width: 0%; }
+.mg-btn {
+  width: 82px; height: 82px; border-radius: 50%;
+  background: linear-gradient(145deg,#5ab8ff,#1e6cc8);
+  border: none; color: #fff;
+  font-family: 'Poppins', sans-serif; font-weight: 700; font-size: .8rem;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(30,100,220,.42);
+  transition: transform .07s;
+}
+.mg-btn:active { transform: scale(.91); }
+.mg-done-msg { font-size: .86rem; font-weight: 600; color: #1a5a99; margin-top: 11px; opacity: 0; transition: opacity .4s; }
+
+/* ============================================================
+   MINIGAME 2 — SCHEDULE CARD
+   ============================================================ */
+#mgSchedule {
+  position: fixed; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  z-index: 80; background: rgba(6,18,48,.75); backdrop-filter: blur(8px);
 }
 
-/* Smooth text appearance */
-.textbox, .character { will-change: opacity, transform; }
+.sc-card {
+  position: relative;
+  background: linear-gradient(160deg, #edf6ff 0%, #daeeff 100%);
+  border: 2px solid rgba(100,170,230,0.5);
+  border-radius: 22px; padding: 20px 20px 18px;
+  width: 94%; max-width: 680px;
+  box-shadow: 0 14px 52px rgba(14,60,160,.28), inset 0 1px 0 rgba(255,255,255,.7);
+  overflow: hidden;
+}
 
-/* Dark mode */
-body.dark-mode { background: linear-gradient(180deg,#1f1f2f,#2b2b45); color:#f0dfff; }
-body.dark-mode .nav-btn { background:#593c7f; color:#c484ff; border:2px solid #c484ff; }
+.sc-card::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(160,210,245,.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(160,210,245,.15) 1px, transparent 1px);
+  background-size: 22px 22px; border-radius: 20px; pointer-events: none;
+}
 
-/* --- MEDIA QUERIES FOR PHONES --- */
+.sc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px; position: relative; z-index: 1;
+}
+.sc-title {
+  font-size: .92rem; font-weight: 700;
+  color: var(--txt-name); letter-spacing: .06em; text-transform: uppercase;
+}
+.sc-subtitle { font-size: .66rem; color: #5a90c0; font-weight: 600; margin-top: 2px; }
+
+.sc-hint-btn {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--blue); color: #fff;
+  font-weight: 700; font-size: .74rem; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(58,143,212,.38);
+}
+.sc-hint-btn:hover { transform: scale(1.12); }
+
+.sc-table-wrap {
+  overflow-x: auto; border-radius: 10px;
+  border: 1.5px solid rgba(100,170,230,.3);
+  position: relative; z-index: 1;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+  margin-bottom: 12px;
+}
+.sc-table {
+  width: 100%; border-collapse: collapse;
+  min-width: 480px; background: rgba(255,255,255,.55);
+}
+.sc-table th {
+  background: rgba(190,225,255,.7);
+  color: var(--blue-dk); font-weight: 700;
+  font-size: .6rem; letter-spacing: .07em; text-transform: uppercase;
+  padding: 7px 4px; text-align: center;
+  border-bottom: 1.5px solid rgba(100,170,230,.35);
+}
+.sc-table th.today {
+  background: rgba(58,143,212,.2); color: var(--blue); position: relative;
+}
+.sc-table th.today::after {
+  content: 'TODAY';
+  position: absolute; top: 1px; right: 2px;
+  font-size: .42rem; font-weight: 700; letter-spacing: .08em; color: var(--blue); opacity: .75;
+}
+.sc-table th.corner { background: rgba(170,215,250,.35); min-width: 68px; }
+.sc-table td {
+  border: 1px solid rgba(180,215,245,.45);
+  padding: 0; text-align: center; vertical-align: middle; height: 50px;
+}
+.sc-table td.row-label {
+  background: rgba(195,228,255,.5);
+  color: var(--blue-dk); font-weight: 700;
+  font-size: .58rem; letter-spacing: .07em; text-transform: uppercase;
+  padding: 0 6px; white-space: nowrap;
+  border-right: 1.5px solid rgba(100,170,230,.3);
+}
+
+.sc-locked {
+  font-size: .62rem; font-weight: 600;
+  color: rgba(80,130,180,.45); font-style: italic;
+  padding: 4px 2px; line-height: 1.3;
+}
+
+.sc-slot {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 2px;
+  cursor: pointer; transition: background .15s; padding: 4px;
+}
+.sc-slot:hover { background: rgba(190,224,255,.4); }
+.sc-slot-dash  { width: 24px; height: 1.5px; background: rgba(100,170,220,.3); border-radius: 99px; }
+.sc-slot-empty { font-size: .55rem; color: rgba(90,144,192,.5); font-weight: 600; letter-spacing: .04em; }
+.sc-slot.filled { background: rgba(58,143,212,.1); cursor: pointer; }
+.sc-slot-subj  {
+  font-size: .64rem; font-weight: 700;
+  color: var(--blue-dk); letter-spacing: .02em; line-height: 1.2; padding: 0 2px;
+}
+
+.sc-picker-wrap {
+  position: absolute; z-index: 10;
+  background: rgba(230,244,255,.98);
+  border: 1.5px solid var(--box-border);
+  border-radius: 11px; padding: 7px 5px;
+  box-shadow: 0 8px 28px rgba(20,80,160,.2);
+  display: none; flex-direction: column; gap: 3px;
+  min-width: 110px;
+}
+.sc-picker-wrap.open { display: flex; }
+.sc-opt {
+  padding: 6px 12px; border-radius: 7px;
+  font-size: .72rem; font-weight: 600; color: var(--blue-dk);
+  cursor: pointer; transition: background .12s;
+  text-align: left; border: none; background: none;
+  font-family: 'Poppins', sans-serif; white-space: nowrap;
+}
+.sc-opt:hover  { background: rgba(58,143,212,.13); }
+.sc-opt.active { background: var(--blue); color: #fff; }
+
+.sc-check-wrap {
+  position: absolute; bottom: 16px; right: 18px;
+  display: flex; align-items: center; gap: 8px;
+  opacity: 0; transform: scale(.5) translateY(8px);
+  transition: opacity .35s ease, transform .35s cubic-bezier(.18,1.4,.4,1);
+  pointer-events: none; z-index: 2;
+}
+.sc-check-wrap.show { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+.sc-check-circle {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 14px rgba(30,100,220,.38);
+  animation: cbounce .5s cubic-bezier(.18,1.6,.4,1) forwards;
+}
+@keyframes cbounce { 0%{transform:scale(.4)} 60%{transform:scale(1.18)} 80%{transform:scale(.94)} 100%{transform:scale(1)} }
+.sc-check-svg {
+  width: 18px; height: 18px;
+  stroke: #fff; stroke-width: 2.5;
+  stroke-linecap: round; stroke-linejoin: round; fill: none;
+  stroke-dasharray: 28; stroke-dashoffset: 28;
+  animation: drawchk .38s ease .15s forwards;
+}
+@keyframes drawchk { to { stroke-dashoffset: 0; } }
+.sc-check-label {
+  font-size: .76rem; font-weight: 700; color: var(--blue-dk);
+  white-space: nowrap; opacity: 0; transform: translateX(-4px);
+  animation: fadeinx .3s ease .3s forwards;
+}
+@keyframes fadeinx { to { opacity: 1; transform: translateX(0); } }
+
+.sc-hint-overlay {
+  position: absolute; inset: 0;
+  background: rgba(10,35,80,.56); border-radius: 20px;
+  display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(3px); z-index: 5;
+}
+.sc-hint-overlay.open { display: flex; }
+.sc-hint-box {
+  background: rgba(220,240,255,.98);
+  border: 1.5px solid var(--box-border);
+  border-radius: 15px; padding: 20px 20px 16px;
+  width: 80%; color: var(--txt);
+}
+.sc-hint-box h4 { font-size: .9rem; font-weight: 700; color: var(--blue); margin-bottom: 9px; }
+.sc-hint-box p  { font-size: .79rem; line-height: 1.65; margin-bottom: 7px; }
+.sc-hint-close {
+  display: block; width: 100%; margin-top: 10px; padding: 7px;
+  border-radius: 9px; border: none;
+  background: var(--blue); color: #fff;
+  font-family: 'Poppins', sans-serif; font-weight: 700; font-size: .82rem;
+  cursor: pointer; transition: opacity .2s;
+}
+.sc-hint-close:hover { opacity: .86; }
+
+/* ============================================================
+   MINIGAME 3 — NOTEBOOK
+   ============================================================ */
+#mgClass {
+  position: fixed; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  z-index: 80; background: rgba(6,18,48,.78); backdrop-filter: blur(8px);
+}
+
+.nb-outer {
+  position: relative;
+  width: 94%; max-width: 600px;
+  max-height: 88vh;
+  display: flex; flex-direction: column;
+}
+
+.nb-card {
+  position: relative;
+  background: #fffef7;
+  border-radius: 3px 14px 14px 3px;
+  padding: 18px 22px 20px 38px;
+  overflow-y: auto;
+  flex: 1;
+  box-shadow: -5px 0 0 0 #dcc87a, 0 10px 40px rgba(0,0,0,.24);
+  border: 1.5px solid rgba(210,185,110,.5);
+}
+
+.nb-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    transparent, transparent 27px,
+    rgba(165,205,235,.32) 27px, rgba(165,205,235,.32) 28px
+  );
+  pointer-events: none; border-radius: inherit;
+}
+
+.nb-card::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 30px;
+  width: 1.5px; background: rgba(220,70,70,.2);
+  pointer-events: none;
+}
+
+.nb-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; position: relative; z-index: 1;
+}
+.nb-subject-badge {
+  font-size: .68rem; font-weight: 700;
+  color: var(--blue-dk); text-transform: uppercase; letter-spacing: .1em;
+  background: rgba(58,143,212,.1);
+  border: 1px solid rgba(58,143,212,.25);
+  border-radius: 6px; padding: 2px 9px;
+}
+.nb-timer-wrap { display: flex; align-items: center; gap: 5px; }
+.nb-timer-label { font-size: .62rem; color: #5a90c0; font-weight: 600; }
+.nb-timer {
+  font-size: .95rem; font-weight: 700; color: var(--blue-dk);
+  font-variant-numeric: tabular-nums; min-width: 36px; text-align: right;
+  transition: color .3s;
+}
+.nb-timer.danger {
+  color: #c03030;
+  animation: timerDanger 1.4s ease-in-out infinite;
+}
+@keyframes timerDanger {
+  0%,100% { color: #c03030; text-shadow: none; }
+  50%     { color: #e04040; text-shadow: 0 0 8px rgba(220,50,50,.35); }
+}
+
+.nb-section-title {
+  font-size: .8rem; font-weight: 700; color: var(--txt);
+  margin-bottom: 12px; line-height: 1.5;
+  position: relative; z-index: 1;
+}
+
+.nb-questions { display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 1; }
+
+.nb-q { font-size: .82rem; line-height: 1.75; color: var(--txt); }
+
+.nb-blank {
+  display: inline-block; min-width: 76px;
+  border: none; border-bottom: 2px solid rgba(26,95,160,.5);
+  background: transparent;
+  font-family: 'Poppins', sans-serif; font-size: .82rem; font-weight: 600;
+  color: var(--blue); padding: 0 3px;
+  outline: none; text-align: center;
+  transition: border-color .18s, color .18s;
+}
+.nb-blank.correct { border-bottom-color: #2a8a40; color: #2a8a40; }
+.nb-blank.wrong   { border-bottom-color: #c03030; color: #c03030; }
+
+.nb-opts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.nb-opt {
+  padding: 4px 11px; border-radius: 99px;
+  border: 1.5px solid rgba(100,170,230,.45);
+  background: rgba(210,232,255,.65);
+  font-family: 'Poppins', sans-serif; font-size: .68rem; font-weight: 600;
+  color: var(--blue-dk); cursor: pointer;
+  transition: background .12s, transform .1s;
+}
+.nb-opt:hover  { background: rgba(165,210,252,.9); transform: scale(1.04); }
+.nb-opt.chosen { background: var(--blue); color: #fff; border-color: var(--blue-dk); }
+
+.nb-footer {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 10px; margin-top: 14px; position: relative; z-index: 1;
+}
+.nb-score-preview { font-size: .74rem; font-weight: 600; color: #5a90c0; }
+.nb-submit {
+  padding: 7px 18px; border-radius: 9px;
+  border: 1.5px solid var(--box-border);
+  background: var(--blue); color: #fff;
+  font-family: 'Poppins', sans-serif; font-weight: 700; font-size: .82rem;
+  cursor: pointer; transition: opacity .2s;
+}
+.nb-submit:hover { opacity: .86; }
+
+/* ============================================================
+   NOTEBOOK REFERENCE MODAL
+   ============================================================ */
+#nbRefModal {
+  position: fixed; inset: 0;
+  background: rgba(6,18,48,.82);
+  display: none; align-items: center; justify-content: center;
+  z-index: 85; backdrop-filter: blur(4px);
+}
+.nbr-book {
+  position: relative;
+  background: #fffef7;
+  border-radius: 3px 14px 14px 3px;
+  padding: 20px 24px 18px 40px;
+  width: 92%; max-width: 520px;
+  max-height: 82vh;
+  box-shadow: -5px 0 0 0 #dcc87a, 0 12px 48px rgba(0,0,0,.3);
+  border: 1.5px solid rgba(210,185,110,.5);
+  overflow: hidden;
+}
+.nbr-book::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    transparent, transparent 27px,
+    rgba(165,205,235,.28) 27px, rgba(165,205,235,.28) 28px
+  );
+  pointer-events: none; border-radius: inherit;
+}
+.nbr-book::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 32px;
+  width: 1.5px; background: rgba(220,70,70,.18); pointer-events: none;
+}
+.nbr-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; position: relative; z-index: 1;
+}
+.nbr-title {
+  font-size: .82rem; font-weight: 700; color: var(--blue-dk);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.nbr-page-info { font-size: .68rem; color: #5a90c0; font-weight: 600; }
+.nbr-close {
+  background: none; border: none;
+  font-size: 1rem; color: rgba(100,140,180,.6);
+  cursor: pointer; padding: 0 4px; line-height: 1;
+  transition: color .15s;
+}
+.nbr-close:hover { color: var(--txt); }
+.nbr-content {
+  position: relative; z-index: 1;
+  font-size: .8rem; line-height: 1.75; color: var(--txt);
+  min-height: 200px; max-height: 55vh; overflow-y: auto;
+}
+.nbr-content h4 {
+  font-size: .78rem; font-weight: 700; color: var(--blue);
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: 8px; margin-top: 14px;
+}
+.nbr-content h4:first-child { margin-top: 0; }
+.nbr-content ul { padding-left: 16px; }
+.nbr-content li { margin-bottom: 5px; }
+.nbr-content strong { color: var(--blue-dk); }
+.nbr-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 14px; position: relative; z-index: 1;
+}
+.nbr-nav-btn {
+  padding: 6px 16px; border-radius: 9px;
+  border: 1.5px solid var(--box-border);
+  background: rgba(58,143,212,.1); color: var(--blue-dk);
+  font-family: 'Poppins', sans-serif; font-weight: 700; font-size: .76rem;
+  cursor: pointer; transition: background .15s;
+}
+.nbr-nav-btn:hover   { background: rgba(58,143,212,.22); }
+.nbr-nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+/* ============================================================
+   PHONE UI — pure CSS shapes, no images
+   ============================================================ */
+#phoneScreen {
+  position: fixed; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  z-index: 80; background: rgba(6,18,48,.88); backdrop-filter: blur(10px);
+}
+
+/* Outer bezel — the "rectangle in a rectangle" */
+.ph-bezel {
+  position: relative;
+  width: 320px; height: 640px;
+  background: #111118;
+  border-radius: 40px;
+  border: 3px solid #2a2a38;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.06),
+    0 24px 80px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* Inner screen area — the second rectangle */
+.ph-screen {
+  position: absolute;
+  inset: 12px;
+  background: #0a0a12;
+  border-radius: 28px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+.ph-notch {
+  width: 90px; height: 20px;
+  background: #111118;
+  border-radius: 0 0 12px 12px;
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  z-index: 2;
+}
+
+.ph-statusbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px 0;
+  font-size: .6rem; color: rgba(255,255,255,.6);
+  font-weight: 700; letter-spacing: .04em;
+  flex-shrink: 0; position: relative; z-index: 1;
+}
+.ph-statusbar .ph-icons {
+  display: flex; align-items: center; gap: 5px;
+}
+.ph-signal {
+  display: flex; align-items: flex-end; gap: 1.5px; height: 9px;
+}
+.ph-signal-bar {
+  width: 3px; background: rgba(255,255,255,.7); border-radius: 1px;
+}
+.ph-signal-bar:nth-child(1) { height: 3px; }
+.ph-signal-bar:nth-child(2) { height: 5px; }
+.ph-signal-bar:nth-child(3) { height: 7px; }
+.ph-signal-bar:nth-child(4) { height: 9px; }
+.ph-battery {
+  display: flex; align-items: center;
+  width: 18px; height: 10px;
+  border: 1.5px solid rgba(255,255,255,.5);
+  border-radius: 2px; position: relative;
+}
+.ph-battery::after {
+  content: ''; position: absolute;
+  right: -4px; top: 50%; transform: translateY(-50%);
+  width: 2px; height: 5px;
+  background: rgba(255,255,255,.4); border-radius: 0 1px 1px 0;
+}
+.ph-battery-fill {
+  width: 65%; height: 100%; border-radius: 1px;
+  background: #4cd964;
+}
+
+/* Home screen */
+.ph-home {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 24px 16px 12px; overflow: hidden;
+}
+.ph-date-lock {
+  text-align: center; margin-bottom: 20px; margin-top: 4px;
+}
+.ph-date-lock .ph-day {
+  font-size: .65rem; color: rgba(255,255,255,.5); font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.ph-date-lock .ph-big-time {
+  font-size: 2.4rem; font-weight: 200; color: rgba(255,255,255,.9);
+  letter-spacing: -.02em; line-height: 1.1;
+}
+
+.ph-app-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 14px 8px; padding: 0 2px;
+}
+.ph-app {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  cursor: pointer;
+}
+.ph-app-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; flex-shrink: 0;
+  transition: transform .1s;
+}
+.ph-app:active .ph-app-icon { transform: scale(.9); }
+.ph-app-label {
+  font-size: .5rem; color: rgba(255,255,255,.7);
+  font-weight: 600; text-align: center; line-height: 1.2;
+}
+
+/* App icon backgrounds */
+.icon-msg  { background: linear-gradient(145deg,#34c759,#248a3d); }
+.icon-mail { background: linear-gradient(145deg,#007aff,#0051a8); }
+.icon-cal  { background: linear-gradient(145deg,#ff3b30,#a82020); }
+.icon-cam  { background: linear-gradient(145deg,#3a3a3c,#1c1c1e); }
+.icon-set  { background: linear-gradient(145deg,#8e8e93,#636366); }
+.icon-mus  { background: linear-gradient(145deg,#fc3d57,#b0233e); }
+.icon-map  { background: linear-gradient(145deg,#30d158,#32ade6); }
+.icon-ph   { background: linear-gradient(145deg,#30d158,#248a3d); }
+
+/* Icon emoji rendering */
+.ph-app-icon .icon-emoji {
+  font-size: 1.5rem; line-height: 1;
+}
+
+.ph-badge {
+  position: absolute; top: -4px; right: -4px;
+  min-width: 16px; height: 16px; border-radius: 8px;
+  background: #ff3b30; color: #fff;
+  font-size: .5rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid #0a0a12;
+  padding: 0 3px;
+}
+
+/* Dock */
+.ph-dock {
+  margin-top: auto; padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+}
+
+.ph-home-close {
+  display: block; text-align: center;
+  margin: 10px auto 0;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.4);
+  font-family: 'Poppins', sans-serif; font-size: .6rem; font-weight: 600;
+  border-radius: 20px; padding: 5px 18px;
+  cursor: pointer; transition: background .15s; width: max-content;
+}
+.ph-home-close:hover { background: rgba(255,255,255,.12); }
+
+/* Messages screen */
+.ph-messages-screen {
+  position: absolute; inset: 0;
+  display: none; flex-direction: column;
+  background: #0a0a12;
+}
+.ph-msg-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 32px 14px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  flex-shrink: 0;
+}
+.ph-back-btn {
+  background: none; border: none;
+  color: #007aff; font-size: 1.3rem; cursor: pointer;
+  padding: 0 4px; line-height: 1;
+}
+.ph-contact-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(145deg,#4a6fa0,#2a4070);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: .78rem; font-weight: 700; flex-shrink: 0;
+}
+.ph-contact-name   { font-size: .76rem; font-weight: 700; color: #fff; }
+.ph-contact-status { font-size: .58rem; color: rgba(255,255,255,.4); margin-top: 1px; }
+
+.ph-chat {
+  flex: 1; overflow-y: auto;
+  padding: 12px 12px 8px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.ph-bubble {
+  max-width: 74%; padding: 8px 12px;
+  border-radius: 16px; font-size: .72rem;
+  line-height: 1.5; font-weight: 500;
+}
+.ph-bubble.them {
+  background: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.9);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+.ph-bubble.me {
+  background: #007aff;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}
+.ph-typing {
+  display: flex; align-items: center; gap: 4px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,.1);
+  border-radius: 14px; border-bottom-left-radius: 4px;
+  align-self: flex-start; width: 50px;
+}
+.ph-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,.5);
+  animation: phdot .9s ease-in-out infinite;
+}
+.ph-dot:nth-child(2) { animation-delay: .2s; }
+.ph-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes phdot { 0%,80%,100%{transform:scale(1);opacity:.5} 40%{transform:scale(1.3);opacity:1} }
+
+.ph-replies {
+  padding: 8px 12px 14px;
+  display: flex; flex-direction: column; gap: 5px;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.ph-reply-btn {
+  background: rgba(0,122,255,.18);
+  border: 1px solid rgba(0,122,255,.4);
+  color: #60b0ff;
+  border-radius: 10px; padding: 8px 12px;
+  font-family: 'Poppins', sans-serif; font-size: .7rem; font-weight: 600;
+  cursor: pointer; text-align: left;
+  transition: background .12s, transform .1s;
+}
+.ph-reply-btn:hover  { background: rgba(0,122,255,.32); }
+.ph-reply-btn:active { transform: scale(.98); }
+
+.ph-end-note {
+  text-align: center; font-size: .6rem;
+  color: rgba(255,255,255,.25); padding: 8px 0;
+}
+.ph-close-reply {
+  background: rgba(255,255,255,.05) !important;
+  border-color: rgba(255,255,255,.12) !important;
+  color: rgba(255,255,255,.4) !important;
+  text-align: center !important;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 480px) {
-  .textbox { font-size: 0.85rem; padding: 16px 18px 24px; }
-  .namebox { font-size: 0.9rem; top: -28px; left: 14px; padding: 5px 12px; }
-  .choices { bottom: 140px; gap: 8px; }
-  .choice { padding: 8px; font-size: 0.9rem; }
-  .hint-btn { bottom: 6px; right: 8px; width: 24px; height: 24px; }
+  #textbox  { font-size: .86rem; padding: 16px 16px 40px; }
+  #namebox  { font-size: .83rem; top: -30px; left: 12px; padding: 4px 14px 8px; }
+  .choice   { padding: 9px 12px; font-size: .85rem; }
+  #choices  { bottom: 156px; }
+  .character-container { width: 68%; }
+  .tb-btn   { font-size: .62rem; padding: 2px 5px; }
+  .sc-table { min-width: 380px; }
+  .nb-opt   { font-size: .62rem; padding: 3px 9px; }
+  .ph-bezel { width: 280px; height: 560px; }
 }
 </style>
 </head>
-<script src="global.js"></script>
 <body>
 
-<div class="fade" id="fade"></div>
-<div class="bg" id="bg"></div>
-
+<!-- SCENE LAYER -->
+<div id="fade"></div>
+<div id="bg"></div>
 <div class="character-container">
-  <img class="character" id="character" src="assets/characters/eng.png">
+  <img id="character" src="assets/characters/eng.png" alt="">
 </div>
+<div id="choices"></div>
 
-<div class="choices" id="choices"></div>
-
-<div class="textbox" id="textbox">
-  <div class="namebox" id="namebox"></div>
+<!-- TEXTBOX + TOOLBAR -->
+<div id="textbox">
+  <div id="namebox"></div>
   <div id="text-content"></div>
-  <div class="hint-btn" id="hintBtn">!</div>
-</div>
-
-<div class="hint-modal" id="hintModal">
-  <div class="hint-box">
-    <p>Choices affect relationship routes, scenes, and endings. Some options unlock content later — others quietly lock it.</p>
-    <button id="closeHint">Okay</button>
+  <div id="adv">&#9660;</div>
+  <button class="bottom-icon-btn" id="tipBtn">?</button>
+  <button class="bottom-icon-btn" id="notebookBtn">&#128214;</button>
+  <button class="bottom-icon-btn" id="phoneBtn">&#128241;</button>
+  <div id="toolbar">
+    <button class="tb-btn" id="btnHistory">History</button>
+    <span class="tb-sep">|</span>
+    <button class="tb-btn" id="btnSave">Save</button>
+    <span class="tb-sep">|</span>
+    <button class="tb-btn" id="btnLoad">Load</button>
+    <span class="tb-sep">|</span>
+    <button class="tb-btn" id="btnSettings">Settings</button>
   </div>
 </div>
 
+<!-- MODAL — TIP -->
+<div class="modal-overlay" id="tipModal">
+  <div class="modal-box">
+    <h3>? Tips</h3>
+    <div class="tip-section">
+      <div class="tip-section-title">Choices matter</div>
+      <p>Every decision shifts hidden relationship values. A snark now might lock a route chapters later.</p>
+    </div>
+    <div class="tip-section">
+      <div class="tip-section-title">Route flags</div>
+      <p><span class="tip-tag green">+Affection</span> builds closeness. <span class="tip-tag red">-Trust</span> erodes it silently. You won&rsquo;t see the numbers &mdash; only the consequences.</p>
+    </div>
+    <div class="tip-section">
+      <div class="tip-section-title">Good habits</div>
+      <p><span class="tip-tag blue">Save</span> before any choice. Some endings need very specific decision chains.</p>
+    </div>
+    <div class="tip-section">
+      <div class="tip-section-title">Pay attention</div>
+      <p>Parenthetical lines reveal what the MC actually thinks &mdash; often the opposite of what they say out loud.</p>
+    </div>
+    <button class="modal-close" id="closeTip">Got it</button>
+  </div>
+</div>
+
+<!-- MODAL — HISTORY -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal-box">
+    <h3>&#128220; Dialogue History</h3>
+    <div id="historyList"></div>
+    <button class="modal-close" id="closeHistory">Close</button>
+  </div>
+</div>
+
+<!-- MODAL — SAVE -->
+<div class="modal-overlay" id="saveModal">
+  <div class="modal-box">
+    <h3>&#128190; Save Game</h3>
+    <div class="slot-grid" id="saveSlots"></div>
+    <button class="modal-close" id="closeSave">Cancel</button>
+  </div>
+</div>
+
+<!-- MODAL — LOAD -->
+<div class="modal-overlay" id="loadModal">
+  <div class="modal-box">
+    <h3>&#128194; Load Game</h3>
+    <div class="slot-grid" id="loadSlots"></div>
+    <button class="modal-close" id="closeLoad">Cancel</button>
+  </div>
+</div>
+
+<!-- PANEL — SETTINGS -->
+<div id="settingsPanel">
+  <div class="settings-box">
+    <h3>&#9881; Settings</h3>
+    <div class="sgroup">
+      <div class="sgroup-title">Audio</div>
+      <div class="srow">
+        <div class="slabel">Music Volume<small>Background music</small></div>
+        <input type="range" min="0" max="100" value="70" id="sMusicVol"
+               oninput="document.getElementById('sMusicOut').textContent=this.value+'%'">
+        <span id="sMusicOut" style="font-size:.72rem;font-weight:700;color:var(--blue-dk);min-width:32px;text-align:right">70%</span>
+      </div>
+      <div class="srow">
+        <div class="slabel">SFX Volume<small>Sound effects</small></div>
+        <input type="range" min="0" max="100" value="80" id="sSfxVol"
+               oninput="document.getElementById('sSfxOut').textContent=this.value+'%'">
+        <span id="sSfxOut" style="font-size:.72rem;font-weight:700;color:var(--blue-dk);min-width:32px;text-align:right">80%</span>
+      </div>
+    </div>
+    <hr class="sdivider">
+    <div class="sgroup">
+      <div class="sgroup-title">Text</div>
+      <div class="srow">
+        <div class="slabel">Text Speed<small>How fast dialogue types</small></div>
+        <select id="sTextSpeed" onchange="applyTextSpeed()">
+          <option value="14">Fast</option>
+          <option value="27" selected>Normal</option>
+          <option value="50">Slow</option>
+        </select>
+      </div>
+      <div class="srow">
+        <div class="slabel">Auto-Advance<small>Auto-continue after lines</small></div>
+        <button class="stoggle" id="sAutoAdv" onclick="this.classList.toggle('on')"></button>
+      </div>
+    </div>
+    <hr class="sdivider">
+    <div class="sgroup">
+      <div class="sgroup-title">Display</div>
+      <div class="srow">
+        <div class="slabel">Fullscreen</div>
+        <button class="stoggle" id="sFullscreen" onclick="toggleFS(this)"></button>
+      </div>
+      <div class="srow">
+        <div class="slabel">Text Size</div>
+        <select id="sTextSize" onchange="applyTextSize()">
+          <option value=".86rem">Small</option>
+          <option value="1rem" selected>Normal</option>
+          <option value="1.1rem">Large</option>
+        </select>
+      </div>
+    </div>
+    <button class="modal-close" id="closeSettings">Close</button>
+  </div>
+</div>
+
+<!-- GAME OVER SCREEN -->
+<div id="gameOver">
+  <div class="go-badge">&#127381; Secret Ending Unlocked</div>
+  <div class="go-title">You Slept Through Everything.</div>
+  <div class="go-sub">
+    The alarm gave up. English texted you four times. The school called your house.
+    Technically, your bed had a perfect attendance record today.<br><br>
+    <em>This is a valid life choice. Questionable, but valid.</em>
+  </div>
+  <button class="go-restart" onclick="restartFromAlarm()">&#8635; Try Again (Wake Up This Time)</button>
+</div>
+
+<!-- MINIGAME 1 — ALARM -->
+<div id="mgAlarm">
+  <div class="mg-card">
+    <div class="mg-icon" id="alarmIcon">&#9200;</div>
+    <div class="mg-title">WAKE UP!</div>
+    <div class="mg-sub" id="alarmSub">Tap the button to silence the alarm</div>
+    <div class="mg-bar-wrap"><div class="mg-bar" id="alarmBar"></div></div>
+    <button class="mg-btn" id="alarmBtn">TAP<br>HERE!</button>
+    <div class="mg-done-msg" id="alarmDone">Finally&hellip; you&apos;re up.</div>
+  </div>
+</div>
+
+<!-- MINIGAME 2 — SCHEDULE CARD -->
+<div id="mgSchedule">
+  <div class="sc-card" id="scCard">
+    <div class="sc-header">
+      <div>
+        <div class="sc-title">&#128196;&nbsp; Timetable</div>
+        <div class="sc-subtitle">Tap a Monday slot to pick your subject</div>
+      </div>
+      <button class="sc-hint-btn" id="scHintBtn">?</button>
+    </div>
+
+    <div class="sc-picker-wrap" id="scPicker"></div>
+
+    <div class="sc-table-wrap">
+      <table class="sc-table">
+        <thead>
+          <tr>
+            <th class="corner"></th>
+            <th class="today">Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+          </tr>
+        </thead>
+        <tbody id="scTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="sc-check-wrap" id="scCheckWrap">
+      <div class="sc-check-circle">
+        <svg class="sc-check-svg" viewBox="0 0 24 24">
+          <polyline points="4,13 9,18 20,7"/>
+        </svg>
+      </div>
+      <div class="sc-check-label">Monday filled! Tap to confirm &rarr;</div>
+    </div>
+
+    <div class="sc-hint-overlay" id="scHintOverlay">
+      <div class="sc-hint-box">
+        <h4>&#10067; How it works</h4>
+        <p>Tap any empty cell in the <strong>Monday</strong> column to choose your subject for that period.</p>
+        <p>Tuesday&ndash;Friday are already set from last week &mdash; today is Monday, first day back.</p>
+        <p>Fill all 5 Monday slots to confirm. English is watching, by the way.</p>
+        <button class="sc-hint-close" id="scHintClose">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MINIGAME 3 — CLASS (notebook fill-in-blanks) -->
+<div id="mgClass">
+  <div class="nb-outer">
+    <div class="nb-card" id="nbCard">
+      <div class="nb-header">
+        <div class="nb-subject-badge" id="nbSubject">Subject</div>
+        <div class="nb-timer-wrap">
+          <span class="nb-timer-label">Time left:</span>
+          <span class="nb-timer" id="nbTimer">60</span>
+        </div>
+      </div>
+      <div class="nb-section-title" id="nbTitle"></div>
+      <div class="nb-questions" id="nbQuestions"></div>
+      <div class="nb-footer">
+        <span class="nb-score-preview" id="nbScorePreview"></span>
+        <button class="nb-submit" id="nbSubmit">Submit &#10003;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTEBOOK REFERENCE MODAL -->
+<div id="nbRefModal">
+  <div class="nbr-book">
+    <div class="nbr-header">
+      <div class="nbr-title" id="nbrTitle">Notes</div>
+      <span class="nbr-page-info" id="nbrPageInfo">Page 1 / 1</span>
+      <button class="nbr-close" id="nbrClose">&#10005;</button>
+    </div>
+    <div class="nbr-content" id="nbrContent"></div>
+    <div class="nbr-nav">
+      <button class="nbr-nav-btn" id="nbrPrev">&larr; Prev</button>
+      <button class="nbr-nav-btn" id="nbrNext">Next &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHONE UI -->
+<div id="phoneScreen">
+  <div class="ph-bezel">
+    <div class="ph-screen">
+      <div class="ph-notch"></div>
+
+      <!-- Home screen -->
+      <div class="ph-home" id="phHome">
+        <div class="ph-statusbar">
+          <span id="phTime">8:14</span>
+          <div class="ph-icons">
+            <div class="ph-signal">
+              <div class="ph-signal-bar"></div>
+              <div class="ph-signal-bar"></div>
+              <div class="ph-signal-bar"></div>
+              <div class="ph-signal-bar"></div>
+            </div>
+            <div class="ph-battery"><div class="ph-battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="ph-date-lock">
+          <div class="ph-day">Monday</div>
+          <div class="ph-big-time" id="phBigTime">8:14</div>
+        </div>
+
+        <div class="ph-app-grid">
+          <div class="ph-app" id="phOpenMessages">
+            <div class="ph-app-icon icon-msg">
+              <span class="icon-emoji">💬</span>
+              <div class="ph-badge" id="phMsgBadge">1</div>
+            </div>
+            <span class="ph-app-label">Messages</span>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-mail">
+              <span class="icon-emoji">✉️</span>
+            </div>
+            <span class="ph-app-label">Mail</span>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-cal">
+              <span class="icon-emoji">📅</span>
+            </div>
+            <span class="ph-app-label">Calendar</span>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-cam">
+              <span class="icon-emoji">📷</span>
+            </div>
+            <span class="ph-app-label">Camera</span>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-mus">
+              <span class="icon-emoji">🎵</span>
+            </div>
+            <span class="ph-app-label">Music</span>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-map">
+              <span class="icon-emoji">🗺️</span>
+            </div>
+            <span class="ph-app-label">Maps</span>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-ph">
+              <span class="icon-emoji">📞</span>
+            </div>
+            <span class="ph-app-label">Phone</span>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-set">
+              <span class="icon-emoji">⚙️</span>
+            </div>
+            <span class="ph-app-label">Settings</span>
+          </div>
+        </div>
+
+        <div class="ph-dock">
+          <div class="ph-app" id="phOpenMessages2">
+            <div class="ph-app-icon icon-msg" style="width:44px;height:44px">
+              <span class="icon-emoji">💬</span>
+            </div>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-cam" style="width:44px;height:44px">
+              <span class="icon-emoji">📷</span>
+            </div>
+          </div>
+          <div class="ph-app">
+            <div class="ph-app-icon icon-set" style="width:44px;height:44px">
+              <span class="icon-emoji">⚙️</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="ph-home-close" id="phCloseBtnHome">— Close</button>
+      </div>
+
+      <!-- Messages screen -->
+      <div class="ph-messages-screen" id="phMessagesScreen">
+        <div class="ph-statusbar" style="padding-top:10px">
+          <span id="phTime2">8:14</span>
+          <div class="ph-icons">
+            <div class="ph-signal">
+              <div class="ph-signal-bar"></div>
+              <div class="ph-signal-bar"></div>
+              <div class="ph-signal-bar"></div>
+              <div class="ph-signal-bar"></div>
+            </div>
+            <div class="ph-battery"><div class="ph-battery-fill"></div></div>
+          </div>
+        </div>
+        <div class="ph-msg-header">
+          <button class="ph-back-btn" id="phBackBtn">&#8592;</button>
+          <div class="ph-contact-avatar" id="phAvatar">B</div>
+          <div>
+            <div class="ph-contact-name" id="phContactName">Contact</div>
+            <div class="ph-contact-status" id="phContactStatus">online</div>
+          </div>
+        </div>
+        <div class="ph-chat" id="phChat"></div>
+        <div class="ph-replies" id="phReplies"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
 <script>
-// Same JS logic as original; no changes needed
+"use strict";
+
+// ============================================================
+// PLAYER
+// ============================================================
 const mcName = localStorage.getItem("playerName") || "MC";
-const bg = document.getElementById("bg");
-const fade = document.getElementById("fade");
-const textbox = document.getElementById("textbox");
-const textContent = document.getElementById("text-content");
-const namebox = document.getElementById("namebox");
-const choicesBox = document.getElementById("choices");
-const character = document.getElementById("character");
-const hintBtn = document.getElementById("hintBtn");
-const hintModal = document.getElementById("hintModal");
-const closeHint = document.getElementById("closeHint");
 
-let currentLine = 0, typing = false, index = 0, interval, autoTimer, inChoice = false, modalOpen = false;
+// ============================================================
+// DOM
+// ============================================================
+const bgEl       = document.getElementById("bg");
+const fadeEl     = document.getElementById("fade");
+const charEl     = document.getElementById("character");
 
-function setBackground(src) { fade.style.opacity = 1; setTimeout(() => { bg.style.backgroundImage = `url(${src})`; fade.style.opacity = 0; }, 600); }
+const textbox    = document.getElementById("textbox");
+const textCont   = document.getElementById("text-content");
+const nameboxEl  = document.getElementById("namebox");
+const advEl      = document.getElementById("adv");
+const choiceBox  = document.getElementById("choices");
 
-function typeLine(text,speed=26){
-  clearInterval(interval); clearTimeout(autoTimer); typing=true; index=0;
-  textContent.innerHTML=""; const cursor=document.createElement("span"); cursor.className="cursor"; textContent.appendChild(cursor);
-  interval=setInterval(()=>{
-    if(index<text.length){
-      const span=document.createElement("span"); span.textContent=text[index++]; span.className="letter"; textContent.insertBefore(span,cursor);
-    } else { clearInterval(interval); typing=false; autoTimer=setTimeout(()=>{ if(!inChoice&&!modalOpen){currentLine++; showNext();} },1200);}
-  },speed);
+const tipBtn      = document.getElementById("tipBtn");
+const notebookBtn = document.getElementById("notebookBtn");
+const phoneBtn    = document.getElementById("phoneBtn");
+
+const mgAlarmEl  = document.getElementById("mgAlarm");
+const alarmBtn   = document.getElementById("alarmBtn");
+const alarmBar   = document.getElementById("alarmBar");
+const alarmDone  = document.getElementById("alarmDone");
+const alarmSub   = document.getElementById("alarmSub");
+const alarmIcon  = document.getElementById("alarmIcon");
+const gameOverEl = document.getElementById("gameOver");
+
+const mgScheduleEl  = document.getElementById("mgSchedule");
+const scPicker      = document.getElementById("scPicker");
+const scCheckWrap   = document.getElementById("scCheckWrap");
+const scHintBtn     = document.getElementById("scHintBtn");
+const scHintOverlay = document.getElementById("scHintOverlay");
+const scHintClose   = document.getElementById("scHintClose");
+const scTbody       = document.getElementById("scTbody");
+
+const mgClassEl     = document.getElementById("mgClass");
+const nbSubjectEl   = document.getElementById("nbSubject");
+const nbTitleEl     = document.getElementById("nbTitle");
+const nbQuestionsEl = document.getElementById("nbQuestions");
+const nbTimerEl     = document.getElementById("nbTimer");
+const nbScoreEl     = document.getElementById("nbScorePreview");
+const nbSubmitBtn   = document.getElementById("nbSubmit");
+
+const nbRefModal  = document.getElementById("nbRefModal");
+const nbrTitle    = document.getElementById("nbrTitle");
+const nbrPageInfo = document.getElementById("nbrPageInfo");
+const nbrContent  = document.getElementById("nbrContent");
+const nbrPrev     = document.getElementById("nbrPrev");
+const nbrNext     = document.getElementById("nbrNext");
+const nbrClose    = document.getElementById("nbrClose");
+
+const phoneScreen      = document.getElementById("phoneScreen");
+const phHome           = document.getElementById("phHome");
+const phMessagesScreen = document.getElementById("phMessagesScreen");
+const phChat           = document.getElementById("phChat");
+const phReplies        = document.getElementById("phReplies");
+const phContactName    = document.getElementById("phContactName");
+const phContactStatus  = document.getElementById("phContactStatus");
+const phAvatar         = document.getElementById("phAvatar");
+const phMsgBadge       = document.getElementById("phMsgBadge");
+const phTime           = document.getElementById("phTime");
+const phTime2          = document.getElementById("phTime2");
+const phBigTime        = document.getElementById("phBigTime");
+
+// ============================================================
+// ENGINE STATE
+// ============================================================
+let ln        = 0;
+let typing    = false;
+let tyInt     = null;
+let autoTm    = null;
+let inChoice  = false;
+let modalOpen = false;
+let mgOpen    = false;
+let done      = false;
+let histLog   = [];
+let curBg     = "";
+let curChar   = false;
+let TXT_SPEED = 27;
+let phoneConvoStarted = false;
+
+// ============================================================
+// ENGLISH'S HIDDEN SCHEDULE
+// ============================================================
+const ENG_SCHEDULE = ["Physics", "Filipino", "Biology", "P.E.H.M."];
+const ENG_MATCH_LINES = [
+  "Wait\u2014 Physics first period too?! Okay but I am NOT sharing my formula sheet.",
+  "Filipino! Same! You\u2019re forgiven for the walking thing. Conditionally.",
+  "Biology?! Please sit next to me. I need someone whose notes are legible.",
+  "P.E.H.M.?! Great. Watch me completely embarrass myself in front of you."
+];
+
+// ============================================================
+// SCHEDULE DATA
+// ============================================================
+const PERIODS = [
+  { label:"Period 1", options:["Physics","Statistics","Computer Sci"],  preset:["Statistics","Statistics","Physics","Computer Sci"],  wednesday:"Club A" },
+  { label:"Period 2", options:["Filipino","English","ValEd"],           preset:["English","Filipino","ValEd","English"],              wednesday:"Club B" },
+  { label:"Lunch",    options:[],  preset:["Lunch","Lunch","Lunch","Lunch"], monday:"Lunch", isLunch:true },
+  { label:"Period 3", options:["Biology","Chemistry","Statistics"],     preset:["Chemistry","Biology","Statistics","Chemistry"],      wednesday:null },
+  { label:"Period 4", options:["P.E.H.M.","Social Sci","Math"],        preset:["Math","P.E.H.M.","Social Sci","Math"],              wednesday:null }
+];
+
+let playerSchedule = new Array(PERIODS.length).fill(null);
+
+// ============================================================
+// CLASS DATA
+// ============================================================
+const CLASS_DATA = {
+  "Physics": {
+    timeLimit: 65,
+    title: "Newton\u2019s Laws \u2014 fill in the blanks.",
+    lesson: [
+      { speaker:"teacher", text:"An object at rest stays at rest unless acted on by an outside force. That\u2019s Newton\u2019s first law \u2014 also called the law of ___." },
+      { speaker:"teacher", text:"The closer two objects are, the stronger the gravitational pull between them. Distance and attraction are inversely related." },
+      { speaker:"mc",      text:"(English leans over and writes \u2018same\u2019 next to that last sentence. I don\u2019t acknowledge it.)" },
+    ],
+    notebook: [
+      { heading:"Newton\u2019s 3 Laws", body:"<ul><li><strong>1st (Inertia):</strong> Objects resist changes to their motion.</li><li><strong>2nd:</strong> F = ma</li><li><strong>3rd:</strong> Every action has an equal and opposite reaction.</li></ul>" },
+      { heading:"Gravity",             body:"<ul><li>F = Gm\u2081m\u2082/r\u00b2</li><li>Stronger when objects are <strong>closer</strong> (smaller r).</li></ul>" }
+    ],
+    questions: [
+      { text:"Newton\u2019s first law is also called the law of ___.","answer":"inertia",  opts:["inertia","gravity","motion","friction"] },
+      { text:"F = ___ \xd7 a.",                                       "answer":"m",        opts:["m","v","g","t"] },
+      { text:"For every action there is an equal and opposite ___.",  "answer":"reaction", opts:["reaction","force","energy","mass"] },
+      { text:"Gravity gets ___ as two objects move farther apart.",   "answer":"weaker",   opts:["weaker","stronger","constant","zero"] },
+    ]
+  },
+  "Biology": {
+    timeLimit:65, title:"Cell Biology \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"Every living thing is made of cells. The cell is the basic unit of life \u2014 and the ___ is the cell\u2019s control center."},
+      {speaker:"teacher",text:"The mitochondria produces the cell\u2019s energy. Without it, nothing works."},
+      {speaker:"mc",text:"(English whispers: \u2018Like how you need coffee to function.\u2019 I do not respond to this.)"},
+    ],
+    notebook:[
+      {heading:"Organelles",body:"<ul><li><strong>Nucleus:</strong> Control center; stores DNA.</li><li><strong>Mitochondria:</strong> Produces energy (ATP).</li><li><strong>Ribosome:</strong> Builds proteins.</li><li><strong>Cell membrane:</strong> Controls what enters/exits.</li></ul>"},
+      {heading:"Cell Types", body:"<ul><li><strong>Prokaryote:</strong> No nucleus (bacteria).</li><li><strong>Eukaryote:</strong> Has nucleus (plants, animals, fungi).</li></ul>"}
+    ],
+    questions:[
+      {text:"The powerhouse of the cell is the ___.",            answer:"mitochondria", opts:["mitochondria","nucleus","ribosome","vacuole"]},
+      {text:"DNA is stored in the ___.",                         answer:"nucleus",      opts:["nucleus","ribosome","cytoplasm","membrane"]},
+      {text:"Plant cells have a ___ that animal cells lack.",    answer:"cell wall",    opts:["cell wall","nucleus","mitochondria","ribosome"]},
+      {text:"Ribosomes are responsible for building ___.",       answer:"proteins",     opts:["proteins","lipids","DNA","energy"]},
+    ]
+  },
+  "Chemistry": {
+    timeLimit:65, title:"Atomic Structure \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"The atom is the smallest unit of an element. Its identity is determined by the number of ___ it contains."},
+      {speaker:"teacher",text:"Isotopes are atoms of the same element with different neutron counts. Same identity, different mass."},
+      {speaker:"mc",text:"(English draws a little atom in the margin. It has a smiley face. I\u2019m not sure what that means.)"},
+    ],
+    notebook:[
+      {heading:"Atomic Structure",body:"<ul><li><strong>Protons:</strong> Positive; define the element.</li><li><strong>Neutrons:</strong> No charge; add mass.</li><li><strong>Electrons:</strong> Negative; found in shells.</li></ul>"},
+      {heading:"Key Concepts",    body:"<ul><li><strong>Isotopes:</strong> Same protons, different neutrons.</li><li><strong>Ions:</strong> Gained or lost electrons.</li></ul>"}
+    ],
+    questions:[
+      {text:"The atomic number equals the number of ___.",      answer:"protons",  opts:["protons","neutrons","electrons","quarks"]},
+      {text:"Electrons carry a ___ charge.",                    answer:"negative", opts:["negative","positive","neutral","variable"]},
+      {text:"Isotopes differ in the number of ___.",            answer:"neutrons", opts:["neutrons","protons","electrons","atoms"]},
+      {text:"An atom that loses an electron becomes a ___ ion.",answer:"positive", opts:["positive","negative","neutral","stable"]},
+    ]
+  },
+  "Social Sci": {
+    timeLimit:65, title:"Philippine History \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"History isn\u2019t just dates. It\u2019s patterns \u2014 how power shifts, how people connect, what survives."},
+      {speaker:"teacher",text:"The Philippine Declaration of Independence was proclaimed on June 12, ___."},
+      {speaker:"mc",text:"(English passes me a note: \u2018Some things last longer than declarations.\u2019 I have no idea what that means but I fold the note up and keep it.)"},
+    ],
+    notebook:[
+      {heading:"Key Dates",  body:"<ul><li><strong>1565:</strong> Spanish colonization begins.</li><li><strong>1896:</strong> Revolution; Rizal executed.</li><li><strong>1898:</strong> Independence declared; US takes over.</li><li><strong>1946:</strong> Full independence.</li></ul>"},
+      {heading:"Key Figures",body:"<ul><li><strong>Rizal:</strong> National hero; wrote Noli Me Tangere.</li><li><strong>Bonifacio:</strong> Founded the Katipunan.</li><li><strong>Aguinaldo:</strong> First president.</li></ul>"}
+    ],
+    questions:[
+      {text:"Philippine Independence was declared on June 12, ___.", answer:"1898",            opts:["1898","1896","1901","1945"]},
+      {text:"Andres Bonifacio founded the ___.",                     answer:"Katipunan",       opts:["Katipunan","Ilustrados","KBL","Magdalo"]},
+      {text:"Jose Rizal wrote \u2018___\u2019.",                     answer:"Noli Me Tangere", opts:["Noli Me Tangere","Florante","Ibong Adarna","El Fili"]},
+      {text:"The first Philippine president was Emilio ___.",        answer:"Aguinaldo",       opts:["Aguinaldo","Quezon","Osmena","Roxas"]},
+    ]
+  },
+  "Computer Sci": {
+    timeLimit:55, title:"Programming Basics \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"An algorithm is a step-by-step set of instructions. Think of it like a script \u2014 every decision accounted for."},
+      {speaker:"teacher",text:"A ___ is a named container that holds a value you can use and change later."},
+      {speaker:"mc",text:"(English: \u2018Kind of like how \u201cfriend\u201d is a placeholder for something more specific.\u2019 I pretend not to hear her.)"},
+    ],
+    notebook:[
+      {heading:"Core Concepts",body:"<ul><li><strong>Variable:</strong> Named value storage.</li><li><strong>Function:</strong> Reusable block of code.</li><li><strong>Loop:</strong> Repeats code.</li><li><strong>Conditional:</strong> if/else branching.</li></ul>"},
+      {heading:"Data Types",  body:"<ul><li><strong>int:</strong> Whole numbers.</li><li><strong>float:</strong> Decimals.</li><li><strong>string:</strong> Text.</li><li><strong>bool:</strong> True/False.</li></ul>"}
+    ],
+    questions:[
+      {text:"A named container for a value is called a ___.",    answer:"variable",    opts:["variable","function","loop","class"]},
+      {text:"An if/else block is an example of a ___.",          answer:"conditional", opts:["conditional","loop","function","array"]},
+      {text:"Code that repeats is called a ___.",                answer:"loop",        opts:["loop","variable","method","string"]},
+      {text:"True or False values are stored as a ___ type.",    answer:"bool",        opts:["bool","int","float","string"]},
+    ]
+  },
+  "English": {
+    timeLimit:60, title:"Grammar & Literature \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"Language is how we encode meaning \u2014 and sometimes, what we can\u2019t quite say out loud."},
+      {speaker:"teacher",text:"A word that modifies a noun is called an ___. A word that modifies a verb is an adverb."},
+      {speaker:"mc",text:"(English elbows me. \u2018She\u2019s literally describing you right now,\u2019 she whispers. I have no idea if that\u2019s a compliment.)"},
+    ],
+    notebook:[
+      {heading:"Parts of Speech",  body:"<ul><li><strong>Noun:</strong> Person, place, thing.</li><li><strong>Verb:</strong> Action or state.</li><li><strong>Adjective:</strong> Modifies a noun.</li><li><strong>Adverb:</strong> Modifies a verb/adjective.</li></ul>"},
+      {heading:"Literary Devices", body:"<ul><li><strong>Metaphor:</strong> Direct comparison.</li><li><strong>Simile:</strong> Comparison using \u2018like\u2019 or \u2018as\u2019.</li><li><strong>Irony:</strong> Meaning opposite of what\u2019s said.</li></ul>"}
+    ],
+    questions:[
+      {text:"A word that describes a noun is called an ___.",       answer:"adjective", opts:["adjective","adverb","verb","pronoun"]},
+      {text:"The past tense of \u2018run\u2019 is ___.",             answer:"ran",       opts:["ran","runned","run","ranned"]},
+      {text:"A direct comparison without \u2018like\u2019 is a ___.",answer:"metaphor",  opts:["metaphor","simile","irony","hyperbole"]},
+      {text:"An adverb modifies a ___.",                            answer:"verb",      opts:["verb","noun","adjective","pronoun"]},
+    ]
+  },
+  "Filipino": {
+    timeLimit:60, title:"Wikang Filipino \u2014 punan ang mga patlang.",
+    lesson:[
+      {speaker:"teacher",text:"Ang wika ay salamin ng kultura. Ang bawat salita ay may kasaysayan, may damdamin."},
+      {speaker:"teacher",text:"Ang pambansang wika ng Pilipinas ay ___. Hindi ito basta paraan ng komunikasyon \u2014 ito ay pagkakakilanlan."},
+      {speaker:"mc",text:"(Bumulong si English: \u2018Parang ka naman, yung nagpapakilala na hindi pa handa.\u2019 Wala akong masasabi.)"},
+    ],
+    notebook:[
+      {heading:"Mga Pangunahing Konsepto",body:"<ul><li><strong>Salitang-ugat:</strong> Pinakasimpleng anyo ng salita.</li><li><strong>Panlapi:</strong> Unlapi, gitlapi, hulapi.</li><li><strong>Pangungusap:</strong> Paksa + Panaguri.</li></ul>"},
+      {heading:"Mga Bayani",               body:"<ul><li><strong>Rizal:</strong> Sumulat ng Noli at El Fili.</li><li><strong>Bonifacio:</strong> Itinayo ang Katipunan.</li><li><strong>Balagtas:</strong> Sumulat ng Florante at Laura.</li></ul>"}
+    ],
+    questions:[
+      {text:"Ang pambansang wika ng Pilipinas ay ___.",               answer:"Filipino", opts:["Filipino","Tagalog","Bisaya","Ilocano"]},
+      {text:"Ang salitang-ugat ng \u2018maganda\u2019 ay ___.",        answer:"ganda",    opts:["ganda","maganda","gandang","paganda"]},
+      {text:"Si ___ ay sumulat ng Florante at Laura.",                answer:"Balagtas", opts:["Balagtas","Rizal","Bonifacio","Mabini"]},
+      {text:"Ang \u2018Noli Me Tangere\u2019 ay isinulat ni ___.",    answer:"Rizal",    opts:["Rizal","Balagtas","Aguinaldo","del Pilar"]},
+    ]
+  },
+  "P.E.H.M.": {
+    timeLimit:45, title:"Physical Education & Health \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"Fitness is about capacity \u2014 what your body can do when it needs to show up for you. Or for someone else."},
+      {speaker:"teacher",text:"Remember the FITT principle: Frequency, Intensity, ___, and Type."},
+      {speaker:"mc",text:"(English is already stretching. She does this competitively. I find it both impressive and unsettling.)"},
+    ],
+    notebook:[
+      {heading:"FITT Principle",body:"<ul><li><strong>F</strong>requency: How often.</li><li><strong>I</strong>ntensity: How hard.</li><li><strong>T</strong>ime: How long.</li><li><strong>T</strong>ype: What kind.</li></ul>"},
+      {heading:"Health Tips",   body:"<ul><li>60 minutes of activity recommended daily for teens.</li><li>Warm up before, cool down after.</li><li>Hydration matters.</li></ul>"}
+    ],
+    questions:[
+      {text:"The FITT principle: Frequency, Intensity, ___, Type.", answer:"Time",     opts:["Time","Team","Task","Training"]},
+      {text:"Recommended daily exercise for teens is ___ minutes.", answer:"60",       opts:["60","30","90","45"]},
+      {text:"You should ___ up before intense exercise.",            answer:"warm",     opts:["warm","cool","speed","power"]},
+      {text:"Basketball was invented by Dr. James ___.",             answer:"Naismith", opts:["Naismith","Jordan","James","Bird"]},
+    ]
+  },
+  "ValEd": {
+    timeLimit:50, title:"Values Education \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"Character is not what you do when people are watching. It\u2019s what you do when no one is."},
+      {speaker:"teacher",text:"The Filipino value of communal unity \u2014 helping each other without being asked \u2014 is called ___."},
+      {speaker:"mc",text:"(English raises her hand immediately. I did not. I\u2019m fine with this.)"},
+    ],
+    notebook:[
+      {heading:"Core Filipino Values",body:"<ul><li><strong>Bayanihan:</strong> Communal unity.</li><li><strong>Utang na loob:</strong> Debt of gratitude.</li><li><strong>Pakikisama:</strong> Getting along.</li><li><strong>Hiya:</strong> Sense of shame/conscience.</li></ul>"},
+      {heading:"Universal Values",    body:"<ul><li><strong>Golden Rule:</strong> Treat others as you wish to be treated.</li><li><strong>Integrity:</strong> Doing right even unseen.</li><li><strong>Empathy:</strong> Understanding others.</li></ul>"}
+    ],
+    questions:[
+      {text:"The Filipino value of communal unity is ___.",          answer:"Bayanihan",  opts:["Bayanihan","Hiya","Pakikisama","Utang na loob"]},
+      {text:"Treating others how you want to be treated is the ___ Rule.", answer:"Golden", opts:["Golden","Silver","Platinum","Bronze"]},
+      {text:"Doing right when no one is watching shows ___.",        answer:"integrity",  opts:["integrity","courage","empathy","pride"]},
+      {text:"Utang na loob refers to a debt of ___.",                answer:"gratitude",  opts:["gratitude","money","honor","labor"]},
+    ]
+  },
+  "Statistics": {
+    timeLimit:60, title:"Statistics Basics \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"Statistics is finding patterns in chaos. You gather data, analyze it, and draw conclusions \u2014 carefully."},
+      {speaker:"teacher",text:"The ___ is the average of a data set. Add all values and divide by the count."},
+      {speaker:"mc",text:"(English whispers: \u2018If you averaged out all the times I\u2019ve been annoyed at you, you\u2019d still come out positive.\u2019 I genuinely don\u2019t know what to do with this.)"},
+    ],
+    notebook:[
+      {heading:"Central Tendency",body:"<ul><li><strong>Mean:</strong> Sum \xf7 count.</li><li><strong>Median:</strong> Middle value when sorted.</li><li><strong>Mode:</strong> Most frequent value.</li></ul>"},
+      {heading:"Key Terms",       body:"<ul><li><strong>Range:</strong> Max \u2212 Min.</li><li><strong>Variance:</strong> Avg of squared differences from mean.</li></ul>"}
+    ],
+    questions:[
+      {text:"The ___ is the sum of all values divided by the count.",    answer:"mean",   opts:["mean","median","mode","range"]},
+      {text:"The middle value of a sorted dataset is the ___.",          answer:"median", opts:["median","mean","mode","variance"]},
+      {text:"The most frequently occurring value is the ___.",           answer:"mode",   opts:["mode","mean","median","deviation"]},
+      {text:"The ___ is the difference between the highest and lowest.", answer:"range",  opts:["range","mean","mode","variance"]},
+    ]
+  },
+  "Math": {
+    timeLimit:60, title:"Algebra \u2014 fill in the blanks.",
+    lesson:[
+      {speaker:"teacher",text:"An equation is a statement of balance. Whatever you do to one side, you do to the other. Think of it as fairness."},
+      {speaker:"teacher",text:"Order of operations: PEMDAS. Parentheses first, then Exponents, then Multiplication and Division, then Addition and Subtraction."},
+      {speaker:"mc",text:"(English writes \u2018emotional math\u2019 in her notes and circles it. I act like I didn\u2019t see it.)"},
+    ],
+    notebook:[
+      {heading:"Algebra Rules",body:"<ul><li>Do the same operation to both sides.</li><li><strong>PEMDAS:</strong> Parentheses, Exponents, Mult/Div, Add/Sub.</li></ul>"},
+      {heading:"Key Formulas", body:"<ul><li>Area of rectangle = l \xd7 w</li><li>Area of triangle = \xbd \xd7 base \xd7 height</li><li>a\xb2 + b\xb2 = c\xb2</li></ul>"}
+    ],
+    questions:[
+      {text:"If x + 7 = 15, then x = ___.",                  answer:"8",         opts:["8","7","6","9"]},
+      {text:"In PEMDAS, E stands for ___.",                   answer:"Exponents", opts:["Exponents","Equals","Elements","Evaluate"]},
+      {text:"Area of a rectangle is length \xd7 ___.",        answer:"width",     opts:["width","height","area","depth"]},
+      {text:"a\xb2 + b\xb2 = ___ is the Pythagorean theorem.",answer:"c\xb2",    opts:["c\xb2","a\xb2","b\xb2","d\xb2"]},
+    ]
+  }
+};
+
+// ============================================================
+// CLASS HINTS
+// ============================================================
+const CLASS_HINTS = {
+  "Physics":      [{label:"Hint 1",text:"Newton\u2019s first law is about what happens when nothing acts on an object."},{label:"Hint 2",text:"F = ___ \xd7 a. What property resists acceleration?"},{label:"Hint 3",text:"Gravity weakens with distance. More r = less pull."}],
+  "Biology":      [{label:"Hint 1",text:"The powerhouse produces energy. Starts with M."},{label:"Hint 2",text:"DNA is stored in the control center."},{label:"Hint 3",text:"Plant cells have a rigid outer layer animal cells don\u2019t."}],
+  "Chemistry":    [{label:"Hint 1",text:"Atomic number = a specific particle count. Not neutrons."},{label:"Hint 2",text:"Electrons are lightest and carry a charge opposite to protons."},{label:"Hint 3",text:"Isotopes: same element, different mass. What changes?"}],
+  "Social Sci":   [{label:"Hint 1",text:"Philippine independence was declared in the late 1800s."},{label:"Hint 2",text:"Bonifacio\u2019s group started with K. It\u2019s a Filipino word."},{label:"Hint 3",text:"Rizal\u2019s most famous novel starts with \u2018Noli\u2019."}],
+  "Computer Sci": [{label:"Hint 1",text:"Variable = named. Function = reusable. Loop = repeats. What does if/else do?"},{label:"Hint 2",text:"bool = true/false. int = whole numbers. What holds text?"}],
+  "English":      [{label:"Hint 1",text:"Adjective = modifies a noun. Adverb = modifies a verb."},{label:"Hint 2",text:"Metaphor says \u2018X is Y\u2019. Simile says \u2018X is like Y\u2019."}],
+  "Filipino":     [{label:"Hint 1",text:"Ang pambansang wika ng Pilipinas ay pinagsama-samang diyalekto."},{label:"Hint 2",text:"Florante at Laura \u2014 sino ang may-akda?"}],
+  "P.E.H.M.":    [{label:"Hint 1",text:"FITT: F=Frequency, I=Intensity, T=___, T=Type."},{label:"Hint 2",text:"Basketball inventor: last name starts with N."}],
+  "ValEd":        [{label:"Hint 1",text:"Bayanihan is Filipino. Golden Rule is universal."},{label:"Hint 2",text:"Doing right unseen = a specific word for that quality."}],
+  "Statistics":   [{label:"Hint 1",text:"Mean=average, Median=middle, Mode=most frequent."},{label:"Hint 2",text:"Range = highest minus lowest."}],
+  "Math":         [{label:"Hint 1",text:"PEMDAS: P, then E (what does E stand for?), then M/D, then A/S."},{label:"Hint 2",text:"Rectangle area = length times ___ (the other dimension)."}],
+};
+
+// ============================================================
+// PHONE CONVERSATION
+// ============================================================
+const SENDER_BY_SUBJECT = {
+  "Filipino":"Jay","ValEd":"Sam","Statistics":"Rey","Biology":"Bio",
+  "Chemistry":"KC","Physics":"Al","Social Sci":"Sol","Computer Sci":"Dev",
+  "Math":"Max","P.E.H.M.":"Jo","English":"Alex",
+};
+
+const PHONE_THREAD = [
+  { from:"them", text:"hey did u survive first period",            delay:800  },
+  { from:"them", text:"i heard there was a surprise quiz lmaooo", delay:1400 },
+  {
+    from:"me",
+    choices:[
+      { text:"yeah barely. forgot my notes",     next:3 },
+      { text:"it was fine actually",             next:4 },
+      { text:"...i don't want to talk about it", next:5 },
+    ]
+  },
+  { from:"them", text:"oh no \uD83D\uDC80 same tbh",                         delay:900  },
+  { from:"them", text:"u sitting with english next period?",      delay:1200, end:true  },
+  { from:"them", text:"wait really?? i got like half of them",    delay:900  },
+  { from:"them", text:"u and english still joined at the hip or", delay:1200, end:true  },
+  { from:"them", text:"lol okay that means bad",                  delay:900  },
+  { from:"them", text:"anyway u sitting with english again?",     delay:1200, end:true  },
+];
+
+let phoneConvoIdx = 0;
+
+// ============================================================
+// MAIN SCRIPT
+// ============================================================
+const script = [
+  /* 0  */ { bg:"assets/backgrounds/bedroombg.webp" },
+  /* 1  */ { minigame:true },
+  /* 2  */ { name:mcName,    text:"\u2026Great. I\u2019m awake." },
+  /* 3  */ { name:mcName,    text:"Another day of consciousness. Thrilling." },
+  /* 4  */ { name:mcName,    text:"If I skip school, future me suffers." },
+  /* 5  */ { name:mcName,    text:"But if I don\u2019t skip school, present me suffers." },
+  /* 6  */ { name:mcName,    text:"And unfortunately, future me and present me are both me." },
+  /* 7  */ { name:mcName,    text:"Whatever. Alright. Get up. Hate everything later." },
+
+  /* 8  */ { fade:"assets/backgrounds/hsbuildingfront.webp" },
+  /* 9  */ { char:true,  name:"English", text:"Hey! You left me behind again!" },
+  /* 10 */ { name:mcName, text:"(Oh. It\u2019s English. My friend through thick and thin \u2014 though she can be a little overdramatic sometimes.)" },
+  /* 11 */ { name:mcName, text:"(Like now.)" },
+
+  /* 12 */ { char:true, name:"English", text:"Well? What do you have to say for yourself, mister?", choice:[
+    { text:"Apologize sincerely.", branch:13 },
+    { text:"Stay silent.",         branch:16 },
+    { text:"Snark.",               branch:19 },
+  ]},
+
+  /* 13 */ { name:mcName,    text:"I\u2019m sorry. I should\u2019ve waited for you." },
+  /* 14 */ { name:"English", text:"\u2026Fine. I forgive you. But ONLY because you looked genuinely pitiful just now." },
+  /* 15 */ { name:mcName,    text:"(She\u2019s smiling. She won this one and she knows it.)", branch:22 },
+
+  /* 16 */ { name:mcName,    text:"\u2026" },
+  /* 17 */ { name:"English", text:"Really? REALLY? You have NOTHING to say?!" },
+  /* 18 */ { name:mcName,    text:"(She\u2019s going to be mad about this for the rest of the week, isn\u2019t she.)", branch:22 },
+
+  /* 19 */ { name:mcName,    text:"You walk fast enough for both of us. Honestly you should be thanking me." },
+  /* 20 */ { name:"English", text:"I\u2014 You\u2014 UNBELIEVABLE." },
+  /* 21 */ { name:mcName,    text:"(Worth it. One thousand percent worth it.)", branch:22 },
+
+  /* 22 */ { char:true,  name:"English", text:"Anyway\u2014 do you even know what class we have first? Because I definitely don\u2019t." },
+  /* 23 */ { name:mcName, text:"I\u2019m going to pretend I planned this whole situation so I could dramatically check my schedule right now." },
+  /* 24 */ { name:"English", text:"That is the most pathetic thing you\u2019ve ever said and I heard you sneeze so hard you fell off your chair in sixth grade." },
+  /* 25 */ { name:mcName, text:"(She\u2019s not wrong. I did fall off the chair.)" },
+  /* 26 */ { name:"English", text:"Just\u2014 check the card! We\u2019re going to be late and I refuse to get a tardy mark because of YOU." },
+  /* 27 */ { name:mcName, text:"Okay okay, hold on. Where did I even put it\u2026" },
+  /* 28 */ { name:"English", text:"If you say you lost it I am going home. I am GOING HOME." },
+  /* 29 */ { name:mcName, text:"(I did not lose it. Probably. Hopefully.)" },
+
+  /* 30 */ { schedule:true },
+];
+
+// Preload static backgrounds
+["assets/backgrounds/bedroombg.webp",
+ "assets/backgrounds/hsbuildingfront.webp",
+ "assets/backgrounds/hallway.webp",
+ "assets/backgrounds/classroom.webp"].forEach(src => { new Image().src = src; });
+
+// ============================================================
+// BACKGROUND HELPERS
+// ============================================================
+function setBackground(src) { bgEl.style.backgroundImage = `url(${src})`; curBg = src; }
+function fadeToBackground(src, callback) {
+  curBg = src;
+  fadeEl.style.opacity = 1;
+  setTimeout(() => {
+    bgEl.style.backgroundImage = `url(${src})`;
+    fadeEl.style.opacity = 0;
+    setTimeout(callback, 520);
+  }, 520);
 }
 
-textbox.addEventListener("click",()=>{ if(typing){clearInterval(interval); textContent.textContent=script[currentLine].text; typing=false; return;} if(!inChoice&&!modalOpen){clearTimeout(autoTimer); currentLine++; showNext();} });
+// ============================================================
+// TYPING ENGINE
+// ============================================================
+function clearAll() {
+  clearInterval(tyInt);
+  clearTimeout(autoTm);
+  tyInt = null; autoTm = null;
+}
 
-hintBtn.onclick=()=>{ modalOpen=true; hintModal.style.display="flex"; };
-closeHint.onclick=()=>{ modalOpen=false; hintModal.style.display="none"; };
+function schedNext(delay = 1300) {
+  clearTimeout(autoTm);
+  if (!inChoice && !modalOpen && !mgOpen && !done) {
+    autoTm = setTimeout(() => { ln++; showNext(); }, delay);
+  }
+}
 
-function showChoices(options){
-  inChoice=true;
-  hintBtn.classList.add("show");
-  choicesBox.innerHTML="";
-  choicesBox.style.display="flex";
-  options.forEach(opt=>{
-    const btn=document.createElement("div"); btn.className="choice"; btn.textContent=opt.text;
-    btn.onclick=()=>{ inChoice=false; hintBtn.classList.remove("show"); choicesBox.style.display="none"; currentLine++; opt.callback(); };
-    choicesBox.appendChild(btn);
+function typeText(text, onDone) {
+  clearAll();
+  typing = true;
+  advEl.classList.remove("show");
+
+  let i = 0;
+  textCont.innerHTML = "";
+  const cur = document.createElement("span");
+  cur.className = "tcursor";
+  textCont.appendChild(cur);
+
+  tyInt = setInterval(() => {
+    if (i < text.length) {
+      const s = document.createElement("span");
+      s.textContent = text[i++];
+      textCont.insertBefore(s, cur);
+    } else {
+      clearInterval(tyInt); tyInt = null;
+      typing = false; cur.remove();
+      advEl.classList.add("show");
+      if (onDone) onDone();
+      else schedNext();
+    }
+  }, TXT_SPEED);
+}
+
+function skipType(text, onDone) {
+  clearAll();
+  textCont.textContent = text;
+  typing = false;
+  advEl.classList.add("show");
+  if (onDone) onDone();
+  else schedNext();
+}
+
+// ============================================================
+// TEXTBOX CLICK
+// ============================================================
+textbox.addEventListener("click", e => {
+  if (e.target.closest("#toolbar") || e.target.id === "tipBtn" ||
+      e.target.id === "notebookBtn" || e.target.id === "phoneBtn") return;
+  if (mgOpen || inChoice || done) return;
+  if (modalOpen) { closeAllModals(); return; }
+
+  const l = script[ln];
+  if (typing) {
+    if (l && l.choice) skipType(l.text, () => showChoicesForLine(l));
+    else               skipType(l && l.text ? l.text : "");
+    return;
+  }
+
+  clearTimeout(autoTm);
+  advEl.classList.remove("show");
+  ln++;
+  showNext();
+});
+
+// ============================================================
+// CHOICES
+// ============================================================
+function showChoicesForLine(l) {
+  inChoice = true;
+  advEl.classList.remove("show");
+  choiceBox.innerHTML = "";
+  choiceBox.style.display = "flex";
+
+  l.choice.forEach(opt => {
+    const b = document.createElement("div");
+    b.className = "choice";
+    b.textContent = opt.text;
+    b.addEventListener("click", () => {
+      inChoice = false;
+      choiceBox.style.display = "none";
+      ln = opt.branch;
+      showNext();
+    });
+    choiceBox.appendChild(b);
   });
 }
 
-const script=[
-  { bg:"assets/backgrounds/bedroombg.webp", auto:true },
-  { name:mcName, text:"…Great. I’m awake." },
-  { name:mcName, text:"Another day of consciousness. Thrilling." },
-  { name:mcName, text:"If I skip school, future me suffers." },
-  { name:mcName, text:"But if I don't skip school, present me suffers." },
-  { name:mcName, text:"And unfortunately, future me and present me are both me." },
-  { name:mcName, text:"Whatever. Alright. Get up. Hate everything later." },
-  { bg:"assets/backgrounds/hsbuildingfront.webp", auto:true },
-  { char:true, name:"English", text:"Hey! You left me behind again!" },
-  { name:mcName, text:"(Oh. It's English. My friend through thick and thin, though she can be a little overdramatic sometimes.)" },
-  { name:mcName, text:"(Like now.)" },
-  { name:"English", text:"Well? What do you have to say for yourself, mister?", choice:true }
-];
-
-function showNext(){
-  if(currentLine>=script.length) return;
-  const line=script[currentLine];
-  if(line.bg) setBackground(line.bg);
-  if(line.char!==undefined) character.style.opacity=line.char?1:0;
-  if(line.auto&&!line.text){ setTimeout(()=>{ currentLine++; showNext(); },700); return; }
-  if(line.text){ textbox.style.display="block"; namebox.textContent=line.name||""; typeLine(line.text); }
-  if(line.choice){ clearTimeout(autoTimer); setTimeout(()=>{ showChoices([ { text:"Apologize", callback:showNext }, { text:"Stay silent", callback:showNext }, { text:"Snark.", callback:showNext } ]); },700);}
+// ============================================================
+// MODALS
+// ============================================================
+function openMod(el) {
+  modalOpen = true;
+  clearTimeout(autoTm);
+  el.style.display = "flex";
+}
+function closeMod(el) {
+  el.style.display = "none";
+  modalOpen = false;
+}
+function closeAllModals() {
+  ["tipModal","historyModal","saveModal","loadModal","settingsPanel","nbRefModal"]
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = "none";
+    });
+  modalOpen = false;
 }
 
+// TIP button — context-aware: in class minigame shows hints, otherwise shows tips
+tipBtn.addEventListener("click", e => {
+  e.stopPropagation();
+  if (mgOpen && mgClassEl.style.display === "flex") {
+    openClassHintModal();
+  } else {
+    openMod(document.getElementById("tipModal"));
+  }
+});
+
+document.getElementById("closeTip").addEventListener("click", () => {
+  closeMod(document.getElementById("tipModal"));
+  tipBtn.classList.remove("icon-glow");
+  if (!inChoice && !done && !mgOpen) schedNext(400);
+});
+
+function openClassHintModal() {
+  const subject  = playerSchedule[0] || "Physics";
+  const hints    = CLASS_HINTS[subject] || CLASS_HINTS["Physics"];
+  const tipBox   = document.getElementById("tipModal");
+  const tipInner = tipBox.querySelector(".modal-box");
+
+  tipInner.innerHTML =
+    `<h3>&#128161; Hints \u2014 ${subject}</h3>` +
+    hints.map(h => `<div class="tip-section"><div class="tip-section-title">${h.label}</div><p>${h.text}</p></div>`).join("") +
+    `<button class="modal-close" id="closeTipHint">Close</button>`;
+
+  tipInner.querySelector("#closeTipHint").addEventListener("click", () => {
+    // Restore original tip content for next time
+    restoreTipModal();
+    closeMod(tipBox);
+    tipBtn.classList.remove("icon-glow");
+    resumeClassTimer();
+  });
+
+  pauseClassTimer();
+  tipBox.style.display = "flex";
+  modalOpen = true;
+}
+
+function restoreTipModal() {
+  const tipInner = document.querySelector("#tipModal .modal-box");
+  tipInner.innerHTML = `<h3>? Tips</h3>
+    <div class="tip-section"><div class="tip-section-title">Choices matter</div><p>Every decision shifts hidden relationship values. A snark now might lock a route chapters later.</p></div>
+    <div class="tip-section"><div class="tip-section-title">Route flags</div><p><span class="tip-tag green">+Affection</span> builds closeness. <span class="tip-tag red">-Trust</span> erodes it silently. You won&rsquo;t see the numbers &mdash; only the consequences.</p></div>
+    <div class="tip-section"><div class="tip-section-title">Good habits</div><p><span class="tip-tag blue">Save</span> before any choice. Some endings need very specific decision chains.</p></div>
+    <div class="tip-section"><div class="tip-section-title">Pay attention</div><p>Parenthetical lines reveal what the MC actually thinks &mdash; often the opposite of what they say out loud.</p></div>
+    <button class="modal-close" id="closeTip">Got it</button>`;
+  document.getElementById("closeTip").addEventListener("click", () => {
+    closeMod(document.getElementById("tipModal"));
+    tipBtn.classList.remove("icon-glow");
+    if (!inChoice && !done && !mgOpen) schedNext(400);
+  });
+}
+
+document.getElementById("btnHistory").addEventListener("click", e => {
+  e.stopPropagation();
+  const hl = document.getElementById("historyList");
+  hl.innerHTML = "";
+  if (!histLog.length) {
+    hl.innerHTML = '<div style="font-size:.82rem;color:#7aaac8">No dialogue yet.</div>';
+  } else {
+    [...histLog].reverse().forEach(h => {
+      const d = document.createElement("div");
+      d.className = "hist-entry";
+      d.innerHTML = `<div class="hist-name">${h.name || "&mdash;"}</div><div class="hist-text">${h.text}</div>`;
+      hl.appendChild(d);
+    });
+  }
+  openMod(document.getElementById("historyModal"));
+});
+document.getElementById("closeHistory").addEventListener("click", () => {
+  closeMod(document.getElementById("historyModal"));
+  if (!inChoice && !done && !mgOpen) schedNext(300);
+});
+
+const SLOTS = 5;
+const snap = () => ({
+  ln, bg: curBg, char: curChar,
+  hist: histLog.slice(),
+  sched: playerSchedule.slice(),
+  ts: new Date().toLocaleString()
+});
+
+function renderSave() {
+  const g = document.getElementById("saveSlots");
+  g.innerHTML = "";
+  for (let i = 1; i <= SLOTS; i++) {
+    const raw = localStorage.getItem("sv_" + i);
+    const sv  = raw ? JSON.parse(raw) : null;
+    const r   = document.createElement("div");
+    r.className = "slot-row";
+    r.innerHTML =
+      `<div class="slot-num">Slot ${i}</div>` +
+      `<div class="slot-info">${sv
+        ? `<div>Line ${sv.ln}/${script.length}</div><div class="slot-date">${sv.ts}</div>`
+        : '<div class="slot-empty">Empty</div>'}</div>` +
+      `<div class="slot-act"><button onclick="doSave(${i})">Save</button>` +
+      `${sv ? `<button class="del" onclick="delSave(${i},false)">&#10005;</button>` : ""}</div>`;
+    g.appendChild(r);
+  }
+}
+
+function renderLoad() {
+  const g = document.getElementById("loadSlots");
+  g.innerHTML = "";
+  let any = false;
+  for (let i = 1; i <= SLOTS; i++) {
+    const raw = localStorage.getItem("sv_" + i);
+    const sv  = raw ? JSON.parse(raw) : null;
+    if (!sv) continue;
+    any = true;
+    const r = document.createElement("div");
+    r.className = "slot-row";
+    r.innerHTML =
+      `<div class="slot-num">Slot ${i}</div>` +
+      `<div class="slot-info"><div>Line ${sv.ln}/${script.length}</div><div class="slot-date">${sv.ts}</div></div>` +
+      `<div class="slot-act"><button onclick="doLoad(${i})">Load</button>` +
+      `<button class="del" onclick="delSave(${i},true)">&#10005;</button></div>`;
+    g.appendChild(r);
+  }
+  if (!any) g.innerHTML = '<div style="font-size:.82rem;color:#7aaac8;padding:4px 0">No saves found.</div>';
+}
+
+window.doSave  = i => { localStorage.setItem("sv_" + i, JSON.stringify(snap())); renderSave(); };
+window.delSave = (i, isLoad) => { localStorage.removeItem("sv_" + i); isLoad ? renderLoad() : renderSave(); };
+window.doLoad  = i => {
+  const raw = localStorage.getItem("sv_" + i);
+  if (!raw) return;
+  const sv = JSON.parse(raw);
+  closeAllModals();
+  ln = sv.ln;
+  histLog        = sv.hist  || [];
+  playerSchedule = sv.sched || new Array(PERIODS.length).fill(null);
+  curChar        = sv.char  || false;
+  curBg          = sv.bg    || "";
+  if (curBg) bgEl.style.backgroundImage = `url(${curBg})`;
+  charEl.classList.toggle("visible", curChar);
+  clearAll();
+  inChoice = false; mgOpen = false; done = false;
+  choiceBox.style.display = "none";
+  textbox.style.display   = "block";
+  showNext();
+};
+
+document.getElementById("btnSave").addEventListener("click",     e => { e.stopPropagation(); renderSave(); openMod(document.getElementById("saveModal")); });
+document.getElementById("closeSave").addEventListener("click",   () => { closeMod(document.getElementById("saveModal")); if (!inChoice && !done && !mgOpen) schedNext(300); });
+document.getElementById("btnLoad").addEventListener("click",     e => { e.stopPropagation(); renderLoad(); openMod(document.getElementById("loadModal")); });
+document.getElementById("closeLoad").addEventListener("click",   () => { closeMod(document.getElementById("loadModal")); if (!inChoice && !done && !mgOpen) schedNext(300); });
+document.getElementById("btnSettings").addEventListener("click", e => { e.stopPropagation(); openMod(document.getElementById("settingsPanel")); });
+document.getElementById("closeSettings").addEventListener("click", () => { closeMod(document.getElementById("settingsPanel")); if (!inChoice && !done && !mgOpen) schedNext(300); });
+
+function applyTextSpeed() { TXT_SPEED = parseInt(document.getElementById("sTextSpeed").value, 10); }
+function applyTextSize()  { textCont.style.fontSize = document.getElementById("sTextSize").value; }
+function toggleFS(btn) {
+  btn.classList.toggle("on");
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen().catch(() => {});
+}
+
+// ============================================================
+// MINIGAME 1 — ALARM
+// ============================================================
+let alarmTaps    = 0;
+let alarmDrain   = null;
+let alarmAbandon = null;
+
+function startAlarmMG() {
+  mgOpen = true;
+  alarmTaps = 0;
+  alarmBar.style.width     = "0%";
+  alarmDone.style.opacity  = "0";
+  alarmSub.textContent     = "Tap the button to silence the alarm";
+  alarmIcon.classList.remove("done");
+  alarmIcon.textContent    = "\u23F0";
+  alarmBtn.disabled        = false;
+  alarmBtn.innerHTML       = "TAP<br>HERE!";
+  mgAlarmEl.style.display  = "flex";
+
+  alarmDrain = setInterval(() => {
+    alarmTaps = Math.max(0, alarmTaps - 0.22);
+    alarmBar.style.width = (alarmTaps / 20 * 100) + "%";
+  }, 190);
+
+  alarmAbandon = setTimeout(triggerSleepEnding, 60000);
+
+  // Remove old listener and add fresh one
+  const newBtn = alarmBtn.cloneNode(true);
+  alarmBtn.parentNode.replaceChild(newBtn, alarmBtn);
+  // Re-grab the reference (can't reassign const, so use querySelector)
+  document.getElementById("alarmBtn").onclick = () => {
+    clearTimeout(alarmAbandon);
+    alarmAbandon = null;
+
+    alarmTaps = Math.min(20, alarmTaps + 1);
+    alarmBar.style.width = (alarmTaps / 20 * 100) + "%";
+
+    if (alarmTaps >= 20) {
+      clearInterval(alarmDrain);
+      document.getElementById("alarmBtn").disabled = true;
+      document.getElementById("alarmBtn").innerHTML = "\uD83D\uDCA4";
+      alarmIcon.classList.add("done");
+      alarmIcon.textContent = "\uD83D\uDD15";
+      document.getElementById("alarmSub").textContent = "Alarm silenced.";
+      document.getElementById("alarmDone").style.opacity = "1";
+      setTimeout(() => {
+        mgAlarmEl.style.display = "none";
+        mgOpen = false;
+        ln++;
+        showNext();
+      }, 1300);
+    }
+  };
+}
+
+function triggerSleepEnding() {
+  clearInterval(alarmDrain);
+  mgAlarmEl.style.display = "none";
+  mgOpen = false;
+  gameOverEl.style.display = "flex";
+}
+
+// FIX: restartFromAlarm was missing
+function restartFromAlarm() {
+  gameOverEl.style.display = "none";
+  alarmTaps = 0;
+  mgOpen = false;
+  ln = 1; // back to the alarm line
+  showNext();
+}
+
+// ============================================================
+// MINIGAME 2 — SCHEDULE CARD
+// ============================================================
+document.addEventListener("click", e => {
+  if (!scPicker.contains(e.target) && !e.target.closest(".sc-slot")) {
+    closePicker();
+  }
+});
+
+scHintBtn.addEventListener("click",   () => scHintOverlay.classList.add("open"));
+scHintClose.addEventListener("click", () => scHintOverlay.classList.remove("open"));
+
+scCheckWrap.addEventListener("click", () => {
+  const allFilled = PERIODS.every((p, i) =>
+    p.isLunch || p.options.length === 0 || playerSchedule[i] !== null
+  );
+  if (!allFilled) return;
+  mgScheduleEl.style.display = "none";
+  mgOpen = false;
+  scheduleConfirmed();
+});
+
+function startScheduleMG() {
+  mgOpen = true;
+  playerSchedule = new Array(PERIODS.length).fill(null);
+  scTbody.innerHTML = "";
+  scCheckWrap.classList.remove("show");
+  scHintOverlay.classList.remove("open");
+  closePicker();
+
+  PERIODS.forEach((period, pi) => {
+    const tr = document.createElement("tr");
+    if (period.isLunch) tr.style.background = "rgba(255,240,190,.18)";
+
+    const tdLabel = document.createElement("td");
+    tdLabel.className = "row-label";
+    tdLabel.textContent = period.label;
+    if (period.isLunch) tdLabel.style.fontStyle = "italic";
+    tr.appendChild(tdLabel);
+
+    const tdMon = document.createElement("td");
+    if (period.isLunch || period.options.length === 0) {
+      tdMon.innerHTML = `<div class="sc-locked" style="font-style:italic">${period.monday || period.label}</div>`;
+    } else {
+      tdMon.appendChild(buildEmptySlot(pi));
+    }
+    tr.appendChild(tdMon);
+
+    const days = ["Tue","Wed","Thu","Fri"];
+    days.forEach((day, di) => {
+      const td = document.createElement("td");
+      if (day === "Wed") {
+        const wedVal = period.wednesday;
+        if (wedVal === null) {
+          td.innerHTML = '<div class="sc-locked" style="opacity:.3">\u2014</div>';
+        } else if (wedVal) {
+          const isClub = wedVal === "Club A" || wedVal === "Club B";
+          td.innerHTML = `<div class="sc-locked" style="${isClub?"color:#5a80c0;":""}font-style:italic">${wedVal}</div>`;
+        } else if (period.isLunch) {
+          td.innerHTML = '<div class="sc-locked" style="font-style:italic">Lunch</div>';
+        } else {
+          td.innerHTML = `<div class="sc-locked">${period.preset[di]}</div>`;
+        }
+      } else {
+        const val = period.isLunch ? "Lunch" : period.preset[di];
+        td.innerHTML = `<div class="sc-locked"${period.isLunch?' style="font-style:italic"':""}>${val}</div>`;
+      }
+      tr.appendChild(td);
+    });
+
+    scTbody.appendChild(tr);
+  });
+
+  mgScheduleEl.style.display = "flex";
+}
+
+function buildEmptySlot(pi) {
+  const slot = document.createElement("div");
+  slot.className = "sc-slot";
+  slot.innerHTML = '<div class="sc-slot-dash"></div><div class="sc-slot-empty">tap to add</div>';
+  slot.addEventListener("click", e => { e.stopPropagation(); openPicker(pi, slot); });
+  return slot;
+}
+
+function buildFilledSlot(pi, subj) {
+  const slot = document.createElement("div");
+  slot.className = "sc-slot filled";
+  slot.innerHTML = `<div class="sc-slot-subj">${subj}</div>`;
+  slot.addEventListener("click", e => { e.stopPropagation(); openPicker(pi, slot); });
+  return slot;
+}
+
+function openPicker(pi, slotEl) {
+  scPicker.innerHTML = "";
+  PERIODS[pi].options.forEach(subj => {
+    const btn = document.createElement("button");
+    btn.className   = "sc-opt" + (playerSchedule[pi] === subj ? " active" : "");
+    btn.textContent = subj;
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      selectSubject(pi, subj, slotEl);
+      closePicker();
+    });
+    scPicker.appendChild(btn);
+  });
+
+  const rect = slotEl.getBoundingClientRect();
+  const card = document.getElementById("scCard").getBoundingClientRect();
+  scPicker.style.top  = (rect.bottom - card.top + 4) + "px";
+  scPicker.style.left = Math.max(0, rect.left - card.left) + "px";
+  scPicker.classList.add("open");
+}
+
+function closePicker() { scPicker.classList.remove("open"); }
+
+function selectSubject(pi, subj, slotEl) {
+  playerSchedule[pi] = subj;
+  slotEl.parentNode.replaceChild(buildFilledSlot(pi, subj), slotEl);
+
+  const allFilled = PERIODS.every((p, i) =>
+    p.isLunch || p.options.length === 0 || playerSchedule[i] !== null
+  );
+  if (allFilled) showCheckmark();
+  else scCheckWrap.classList.remove("show");
+}
+
+function showCheckmark() {
+  const circle = scCheckWrap.querySelector(".sc-check-circle");
+  const clone  = circle.cloneNode(true);
+  circle.parentNode.replaceChild(clone, circle);
+  scCheckWrap.classList.add("show");
+}
+
+function scheduleConfirmed() {
+  const subject = playerSchedule[0] || "Physics";
+
+  const interactivePicks = PERIODS
+    .map((p, i) => (!p.isLunch && p.options.length > 0) ? playerSchedule[i] : null)
+    .filter(v => v !== null);
+  const matches = interactivePicks.filter((s, i) => s === ENG_SCHEDULE[i]);
+
+  const post = [];
+  const BASE = 31;
+
+  post.push({ name:mcName,    text:"Okay\u2026 found it." });
+
+  if (matches.length === 0) {
+    post.push({ name:"English", text:"Finally! Let me see\u2014 wait. None of these match mine. How are we even friends." });
+    post.push({ name:mcName,   text:"We have completely different schedules and somehow always end up in the same place. It\u2019s a gift." });
+  } else if (matches.length === 1) {
+    post.push({ name:"English", text:ENG_MATCH_LINES[interactivePicks.indexOf(matches[0])] });
+    post.push({ name:mcName,   text:"(One class together. I\u2019ll take it.)" });
+  } else if (matches.length <= 3) {
+    post.push({ name:"English", text:ENG_MATCH_LINES[interactivePicks.indexOf(matches[0])] });
+    post.push({ name:"English", text:`Wait\u2014 ${matches.length} classes together?! You are OFFICIALLY forgiven for the walking thing.` });
+    post.push({ name:mcName,   text:"(She\u2019s smiling way too hard. I\u2019m choosing not to comment on it.)" });
+  } else {
+    post.push({ name:"English", text:"WAIT. How do we have almost the SAME schedule?! Did you copy mine?!" });
+    post.push({ name:mcName,   text:"I didn\u2019t even know your schedule existed until thirty seconds ago." });
+    post.push({ name:"English", text:"\u2026This is either fate or a scheduling error and either way I\u2019m THRIVING." });
+    post.push({ name:mcName,   text:"(She\u2019s going to bring this up for the next six months. I know it.)" });
+  }
+
+  post.push({ name:"English", text:"Okay, MOVE. First period is basically starting!" });
+  post.push({ name:mcName,    text:"I\u2019m moving, I\u2019m moving\u2014" });
+  post.push({ char:false });
+  post.push({ fade:"assets/backgrounds/hallway.webp" });
+
+  post.push({ name:mcName, text:"(The hallway is a Monday disaster. Bags everywhere. Someone\u2019s eating rice at 7am.)" });
+  post.push({ name:mcName, text:"I genuinely do not know how this school functions." });
+  post.push({ char:true, name:"English", text:"Room 201. There. Go." });
+  post.push({ name:mcName, text:`(${subject}. First period. Great.)` });
+  post.push({ char:false });
+  post.push({ fade:"assets/backgrounds/classroom.webp" });
+
+  post.push({ name:mcName,    text:"\u2026Wait." });
+  post.push({ name:mcName,    text:"I forgot to write my notes." });
+  post.push({ char:true, name:"English", text:"You WHAT." });
+  post.push({ name:mcName,    text:"I had a whole system. The system failed." });
+  post.push({ name:"English", text:"You didn\u2019t have a system. You had a good intention and no follow-through." });
+  post.push({ name:mcName,    text:"(That is genuinely the most accurate thing anyone has ever said about me.)" });
+  post.push({ name:"English", text:"Whatever. The teacher\u2019s going to do a surprise quiz anyway. Just\u2014 do your best." });
+  post.push({ name:mcName,    text:"That is the least inspiring thing you\u2019ve ever said." });
+  post.push({ name:"English", text:"Good luck! I mean it. Kind of." });
+
+  post.push({
+    name:mcName,
+    text:"(There\u2019s a little notebook on my desk. At least I have that much.)",
+    onShow:() => {
+      notebookBtn.style.display = "flex";
+      notebookBtn.dataset.firstOpen = "1";
+      notebookBtn.classList.add("icon-glow");
+    }
+  });
+
+  post.push({ classMG:true });
+
+  script.splice(BASE, script.length - BASE, ...post);
+  ln = BASE;
+  showNext();
+}
+
+// ============================================================
+// MINIGAME 3 — NOTEBOOK (CLASS)
+// ============================================================
+let classTimer    = null;
+let classTimeLeft = 0;
+let classAnswers  = [];
+
+function pauseClassTimer() {
+  if (classTimer) { clearInterval(classTimer); classTimer = null; }
+}
+
+function resumeClassTimer() {
+  if (!mgOpen || mgClassEl.style.display !== "flex") return;
+  if (classTimeLeft <= 0 || classTimer) return;
+  classTimer = setInterval(() => {
+    classTimeLeft--;
+    nbTimerEl.textContent = classTimeLeft;
+    if (classTimeLeft <= 10) nbTimerEl.classList.add("danger");
+    if (classTimeLeft <= 0)  { clearInterval(classTimer); submitClass(); }
+  }, 1000);
+}
+
+function startClassMG() {
+  mgOpen = true;
+  const subject = playerSchedule[0] || "Physics";
+  const def     = CLASS_DATA[subject];
+
+  if (!def) { mgOpen = false; ln++; showNext(); return; }
+
+  nbSubjectEl.textContent = subject;
+  nbTitleEl.textContent   = def.title;
+  nbQuestionsEl.innerHTML = "";
+  nbScoreEl.textContent   = "";
+  classAnswers = [];
+
+  def.questions.forEach((q, qi) => {
+    classAnswers.push({ correct:q.answer, blank:null });
+
+    const wrap  = document.createElement("div");
+    wrap.className = "nb-q";
+
+    const parts = q.text.split("___");
+    const blank = document.createElement("input");
+    blank.type        = "text";
+    blank.className   = "nb-blank";
+    blank.placeholder = "\u2026";
+    blank.readOnly    = true;
+    blank.dataset.qi  = qi;
+
+    wrap.appendChild(document.createTextNode(parts[0]));
+    wrap.appendChild(blank);
+    wrap.appendChild(document.createTextNode(parts[1] || ""));
+
+    const optsWrap = document.createElement("div");
+    optsWrap.className = "nb-opts";
+
+    q.opts.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className   = "nb-opt";
+      btn.textContent = opt;
+      btn.addEventListener("click", () => {
+        optsWrap.querySelectorAll(".nb-opt").forEach(b => b.classList.remove("chosen"));
+        btn.classList.add("chosen");
+        blank.value            = opt;
+        classAnswers[qi].blank = opt;
+        updateScorePreview(def.questions.length);
+      });
+      optsWrap.appendChild(btn);
+    });
+
+    wrap.appendChild(optsWrap);
+    nbQuestionsEl.appendChild(wrap);
+  });
+
+  classTimeLeft = def.timeLimit;
+  nbTimerEl.textContent = classTimeLeft;
+  nbTimerEl.classList.remove("danger");
+  clearInterval(classTimer);
+  classTimer = setInterval(() => {
+    classTimeLeft--;
+    nbTimerEl.textContent = classTimeLeft;
+    if (classTimeLeft <= 10) nbTimerEl.classList.add("danger");
+    if (classTimeLeft <= 0)  { clearInterval(classTimer); submitClass(); }
+  }, 1000);
+
+  nbSubmitBtn.textContent = "Submit \u2713";
+  nbSubmitBtn.onclick     = submitClass;
+  mgClassEl.style.display = "flex";
+
+  tipBtn.classList.add("icon-glow");
+  if (notebookBtn.style.display === "flex") notebookBtn.classList.add("icon-glow");
+}
+
+function updateScorePreview(total) {
+  const filled = classAnswers.filter(a => a.blank !== null).length;
+  nbScoreEl.textContent = `${filled} / ${total} answered`;
+}
+
+function submitClass() {
+  clearInterval(classTimer);
+  classTimer = null;
+  nbTimerEl.classList.remove("danger");
+  tipBtn.classList.remove("icon-glow");
+  notebookBtn.classList.remove("icon-glow");
+
+  const correct = classAnswers.filter(a => a.blank === a.correct).length;
+  const total   = classAnswers.length;
+
+  document.querySelectorAll(".nb-blank").forEach(blank => {
+    const a = classAnswers[parseInt(blank.dataset.qi, 10)];
+    if (a.blank) blank.classList.add(a.blank === a.correct ? "correct" : "wrong");
+  });
+
+  nbScoreEl.textContent   = `Score: ${correct} / ${total}`;
+  nbSubmitBtn.textContent = "Continue\u2026";
+  nbSubmitBtn.onclick     = () => {
+    mgClassEl.style.display = "none";
+    mgOpen = false;
+    classFinished(correct, total);
+  };
+}
+
+function classFinished(correct, total) {
+  const subject = playerSchedule[0] || "Physics";
+  const pct     = correct / total;
+  const post    = [];
+  const BASE    = ln + 1;
+
+  if (correct === 0) {
+    post.push({ char:true, name:"English", text:"Let me see yours real quick\u2014" });
+    post.push({ name:"English", text:"\u2026you got zero." });
+    post.push({ name:mcName,   text:"I was going to say it was a rough morning." });
+    post.push({ name:"English", text:"I am not copying off of zero. I have standards." });
+    post.push({ name:mcName,   text:"(Fair. Completely fair.)" });
+  } else if (pct === 1) {
+    post.push({ char:true, name:"English", text:"Hey, let me\u2014 wait." });
+    post.push({ name:"English", text:"Did you get everything right." });
+    post.push({ name:mcName,   text:"Looks like it." });
+    post.push({ name:"English", text:"Without notes." });
+    post.push({ name:mcName,   text:"Without notes." });
+    post.push({ name:"English", text:"\u2026I hate you a little bit right now. Just so you know." });
+    post.push({ name:mcName,   text:"(She\u2019s copying my answers. All of them. She\u2019s not even pretending.)" });
+  } else if (pct >= 0.6) {
+    post.push({ char:true, name:"English", text:"Okay let me just\u2014 move your paper a little\u2014" });
+    post.push({ name:mcName,   text:"(I don\u2019t move my paper.)" });
+    post.push({ name:"English", text:"You are the worst." });
+    post.push({ name:mcName,   text:"You got a pen?" });
+    post.push({ name:"English", text:"\u2026yes." });
+    post.push({ name:mcName,   text:"(I move the paper.)" });
+    post.push({ name:"English", text:"You\u2019re the best. Don\u2019t tell anyone I said that." });
+  } else {
+    post.push({ char:true, name:"English", text:"How\u2019d you do?" });
+    post.push({ name:mcName,   text:"Not great." });
+    post.push({ name:"English", text:"Me neither." });
+    post.push({ name:"English", text:"We should study next time." });
+    post.push({ name:mcName,   text:"Yeah." });
+    post.push({ name:mcName,   text:"(We will not study next time.)" });
+  }
+
+  post.push({ char:false, name:"Teacher", text:"Alright. Let\u2019s go over the answers." });
+  post.push(...buildTeacherLesson(subject));
+
+  post.push({ char:true, name:"English", text:"That actually made more sense the second time." });
+  post.push({ name:mcName,   text:"Because you already know the answers." });
+  post.push({ name:"English", text:"Details." });
+
+  post.push({ name:mcName,   text:"(The bell cuts me off mid-thought. It always does.)" });
+  post.push({ name:"English", text:"Saved by the bell. Literally." });
+  post.push({ name:mcName,   text:"I wasn\u2019t even saying anything." });
+  post.push({ name:"English", text:"You were about to." });
+  post.push({ char:false });
+  post.push({ fade:"assets/backgrounds/hallway.webp" });
+
+  post.push({ name:mcName, text:"(Back in the hallway. That between-classes silence that\u2019s somehow louder than class.)" });
+  post.push({
+    name:mcName,
+    text:"(My phone buzzes.)",
+    onShow:() => {
+      phoneBtn.style.display = "flex";
+      phoneBtn.classList.add("icon-glow");
+    }
+  });
+  post.push({ char:true, name:"English", text:"Is that your phone?" });
+  post.push({ name:mcName,   text:"\u2026maybe." });
+  post.push({ name:"English", text:"You can check it. I\u2019m not your mom." });
+  post.push({ name:mcName,   text:"(She\u2019s absolutely going to ask who it was.)" });
+  // FIX: use { phone: true } which now correctly calls openPhone()
+  post.push({ phone:true });
+
+  script.splice(BASE, script.length - BASE, ...post);
+  ln = BASE;
+  showNext();
+}
+
+function buildTeacherLesson(subject) {
+  const lines = [];
+  const data  = CLASS_DATA[subject];
+  if (!data) return lines;
+
+  data.lesson.forEach(l => {
+    if (l.speaker === "teacher") lines.push({ name:"Teacher", text:l.text });
+    else                         lines.push({ name:mcName,   text:l.text });
+  });
+
+  lines.push({
+    name:"Teacher",
+    text:"Take notes on that if you haven\u2019t already. It\u2019ll come up again.",
+    onShow:() => notebookBtn.classList.add("icon-glow")
+  });
+
+  return lines;
+}
+
+// ============================================================
+// NOTEBOOK REFERENCE MODAL
+// ============================================================
+let nbrPages   = [];
+let nbrCurrent = 0;
+
+notebookBtn.addEventListener("click", e => {
+  e.stopPropagation();
+  notebookBtn.classList.remove("icon-glow");
+
+  const subject = playerSchedule[0] || "Physics";
+  const def     = CLASS_DATA[subject];
+
+  if (notebookBtn.dataset.firstOpen === "1") {
+    notebookBtn.dataset.firstOpen = "0";
+    nbrPages = [
+      {
+        heading:"Hey! This is your notebook.",
+        body:"<p>Open this anytime during the quiz to check your notes.</p>" +
+             "<p><strong>Opening it pauses the timer</strong> \u2014 so don\u2019t panic.</p>" +
+             "<p>The notes come from the teacher\u2019s lesson. If you paid attention, this is redundant.</p>" +
+             "<hr style='margin:10px 0;border-color:rgba(140,200,240,.3)'>" +
+             "<p style='font-size:.75rem;color:#5a90c0'><strong>Game tip:</strong> Your score affects English\u2019s reaction after class \u2014 including whether she tries to copy off you. High score = leverage. Low score = solidarity.</p>"
+      },
+      ...(def ? def.notebook : [])
+    ];
+  } else {
+    nbrPages = def ? (def.notebook || []) : [];
+  }
+
+  nbrCurrent = 0;
+  nbrTitle.textContent = subject + " \u2014 Notes";
+  renderNbrPage();
+  pauseClassTimer();
+  openMod(nbRefModal);
+});
+
+nbrClose.addEventListener("click", () => {
+  closeMod(nbRefModal);
+  resumeClassTimer();
+  if (!inChoice && !done && !mgOpen) schedNext(200);
+});
+nbrPrev.addEventListener("click", () => { if (nbrCurrent > 0) { nbrCurrent--; renderNbrPage(); } });
+nbrNext.addEventListener("click", () => { if (nbrCurrent < nbrPages.length - 1) { nbrCurrent++; renderNbrPage(); } });
+
+function renderNbrPage() {
+  const page = nbrPages[nbrCurrent];
+  if (!page) return;
+  nbrPageInfo.textContent = `Page ${nbrCurrent + 1} / ${nbrPages.length}`;
+  nbrContent.innerHTML    = `<h4>${page.heading}</h4>${page.body}`;
+  nbrPrev.disabled = nbrCurrent === 0;
+  nbrNext.disabled = nbrCurrent === nbrPages.length - 1;
+}
+
+// ============================================================
+// PHONE SYSTEM — FIXED
+// ============================================================
+
+// Clock tick for phone
+setInterval(() => {
+  const now  = new Date();
+  const time = now.getHours() + ":" + String(now.getMinutes()).padStart(2,"0");
+  if (phTime)    phTime.textContent    = time;
+  if (phTime2)   phTime2.textContent   = time;
+  if (phBigTime) phBigTime.textContent = time;
+}, 1000);
+
+// Sync time immediately
+(function() {
+  const now  = new Date();
+  const time = now.getHours() + ":" + String(now.getMinutes()).padStart(2,"0");
+  if (phTime)    phTime.textContent    = time;
+  if (phTime2)   phTime2.textContent   = time;
+  if (phBigTime) phBigTime.textContent = time;
+})();
+
+phoneBtn.addEventListener("click", e => {
+  e.stopPropagation();
+  phoneBtn.classList.remove("icon-glow");
+  openPhone();
+});
+
+// FIX: openPhone properly shows the phone overlay
+function openPhone() {
+  mgOpen = true;
+  clearTimeout(autoTm);
+  textbox.style.display        = "none";
+  phoneScreen.style.display    = "flex";
+  phHome.style.display         = "flex";
+  phMessagesScreen.style.display = "none";
+  phoneConvoStarted = false;
+}
+
+// FIX: startPhone (called from showNext) now calls openPhone
+function startPhone() {
+  openPhone();
+}
+
+function closePhone() {
+  phoneScreen.style.display = "none";
+  mgOpen = false;
+  phoneBtn.style.display    = "none";
+  textbox.style.display     = "block";
+  phoneFinished();
+}
+
+// Home close button
+document.getElementById("phCloseBtnHome").addEventListener("click", closePhone);
+
+// Back button from messages to home
+document.getElementById("phBackBtn").addEventListener("click", () => {
+  phMessagesScreen.style.display = "none";
+  phHome.style.display           = "flex";
+});
+
+// Open messages from app grid
+document.getElementById("phOpenMessages").addEventListener("click", () => {
+  phMsgBadge.style.display       = "none";
+  phHome.style.display           = "none";
+  phMessagesScreen.style.display = "flex";
+  if (!phoneConvoStarted) { phoneConvoStarted = true; startConvo(); }
+});
+
+// FIX: dock messages icon also works
+document.getElementById("phOpenMessages2").addEventListener("click", () => {
+  phMsgBadge.style.display       = "none";
+  phHome.style.display           = "none";
+  phMessagesScreen.style.display = "flex";
+  if (!phoneConvoStarted) { phoneConvoStarted = true; startConvo(); }
+});
+
+function startConvo() {
+  const subject = playerSchedule[1] || "Filipino";
+  const sender  = SENDER_BY_SUBJECT[subject] || "Jay";
+
+  phContactName.textContent   = sender;
+  phAvatar.textContent        = sender[0].toUpperCase();
+  phContactStatus.textContent = "online";
+
+  phChat.innerHTML    = "";
+  phReplies.innerHTML = "";
+  phoneConvoIdx = 0;
+  advanceConvo();
+}
+
+function advanceConvo() {
+  if (phoneConvoIdx >= PHONE_THREAD.length) { closePhone(); return; }
+  const step = PHONE_THREAD[phoneConvoIdx];
+
+  if (step.from === "them") {
+    phContactStatus.textContent = "typing\u2026";
+    const typingEl = addTypingIndicator();
+    setTimeout(() => {
+      typingEl.remove();
+      phContactStatus.textContent = "online";
+      addBubble("them", step.text);
+      phoneConvoIdx++;
+      if (step.end) {
+        setTimeout(() => {
+          const endNote = document.createElement("div");
+          endNote.className   = "ph-end-note";
+          endNote.textContent = "End of conversation";
+          phChat.appendChild(endNote);
+          phReplies.innerHTML = "";
+          const closeBtn = document.createElement("button");
+          closeBtn.className   = "ph-reply-btn ph-close-reply";
+          closeBtn.textContent = "Close phone";
+          closeBtn.addEventListener("click", closePhone);
+          phReplies.appendChild(closeBtn);
+        }, 600);
+      } else {
+        advanceConvo();
+      }
+    }, step.delay || 900);
+
+  } else if (step.from === "me" && step.choices) {
+    phReplies.innerHTML = "";
+    step.choices.forEach(choice => {
+      const btn = document.createElement("button");
+      btn.className   = "ph-reply-btn";
+      btn.textContent = choice.text;
+      btn.addEventListener("click", () => {
+        phReplies.innerHTML = "";
+        addBubble("me", choice.text);
+        phoneConvoIdx = choice.next;
+        advanceConvo();
+      });
+      phReplies.appendChild(btn);
+    });
+
+  } else {
+    phoneConvoIdx++;
+    advanceConvo();
+  }
+}
+
+function addBubble(side, text) {
+  const b = document.createElement("div");
+  b.className   = "ph-bubble " + side;
+  b.textContent = text;
+  phChat.appendChild(b);
+  phChat.scrollTop = phChat.scrollHeight;
+  return b;
+}
+
+function addTypingIndicator() {
+  const t = document.createElement("div");
+  t.className = "ph-typing";
+  t.innerHTML = '<div class="ph-dot"></div><div class="ph-dot"></div><div class="ph-dot"></div>';
+  phChat.appendChild(t);
+  phChat.scrollTop = phChat.scrollHeight;
+  return t;
+}
+
+function phoneFinished() {
+  const post = [];
+  const BASE = ln + 1;
+
+  post.push({ char:true, name:"English", text:"\u2026okay who was that." });
+  post.push({ name:mcName,   text:"Nobody." });
+  post.push({ name:"English", text:"That is the least convincing \u2018nobody\u2019 I\u2019ve ever heard." });
+  post.push({ name:mcName,   text:"(She\u2019s leaning over. She is literally leaning over to look at my phone.)" });
+  post.push({ name:"English", text:"Was it a classmate?" });
+  post.push({ name:mcName,   text:"It\u2019s fine. Moving on." });
+  post.push({ name:"English", text:"(She squints at me for three full seconds.)" });
+  post.push({ name:"English", text:"Fine. Moving on. But I\u2019m noting this." });
+  post.push({ name:mcName,   text:"(She is absolutely noting this.)", end:true });
+
+  script.splice(BASE, script.length - BASE, ...post);
+  ln = BASE;
+  showNext();
+}   
+
+// ============================================================
+// SHOWNEXT — main engine
+// ============================================================
+function showNext() {
+  if (ln >= script.length) return;
+  const l = script[ln];
+
+  // Non-text directives — process and continue immediately
+  if (l.bg)       { setBackground(l.bg); ln++; showNext(); return; }
+  if (l.fade)     { textbox.style.display = "none"; fadeToBackground(l.fade, () => { ln++; showNext(); }); return; }
+  if (l.minigame) { textbox.style.display = "none"; startAlarmMG();    return; }
+  if (l.schedule) { textbox.style.display = "none"; startScheduleMG(); return; }
+  if (l.classMG)  { textbox.style.display = "none"; startClassMG();    return; }
+  // FIX: l.phone now calls startPhone which calls openPhone — no more broken stub
+  if (l.phone)    { textbox.style.display = "none"; startPhone();      return; }
+
+  // Character visibility
+  if (l.char !== undefined) { curChar = l.char; charEl.classList.toggle("visible", l.char); }
+
+  // onShow callbacks (icon glows, etc.)
+  if (l.onShow) l.onShow();
+
+  // No text — skip to next
+  if (!l.text) { ln++; showNext(); return; }
+
+  histLog.push({ name:l.name || "", text:l.text });
+  textbox.style.display = "block";
+  nameboxEl.textContent = l.name || "";
+
+  if (l.branch !== undefined) {
+    typeText(l.text, () => { ln = l.branch; showNext(); });
+    return;
+  }
+  if (l.choice) {
+    typeText(l.text, () => setTimeout(() => showChoicesForLine(l), 500));
+    return;
+  }
+  if (l.end) {
+    typeText(l.text, () => {
+      advEl.classList.remove("show");
+      done = true;
+      setTimeout(() => {
+        textCont.innerHTML += '<br><span style="font-size:.78rem;opacity:.5;font-style:italic">[To be continued\u2026]</span>';
+      }, 700);
+    });
+    return;
+  }
+
+  typeText(l.text);
+}
+
+// ============================================================
+// INIT
+// ============================================================
 setBackground("assets/backgrounds/bedroombg.webp");
 showNext();
 </script>
